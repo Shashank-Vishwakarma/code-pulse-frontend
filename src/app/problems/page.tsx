@@ -1,5 +1,6 @@
 "use client"
 
+import Header from '@/components/shared/header/Header'
 import { 
     Code, 
     Database, 
@@ -127,8 +128,13 @@ export default function ProblemsPage() {
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">
+            <Header />
             <div className="container mx-auto px-4 py-24">
-            <h1 className="text-3xl font-bold flex justify-center mb-6">Problem Set</h1>
+                <h1 className="text-3xl text-blue-300  font-bold flex justify-center mb-6">Problem Set</h1>
+                <p className="text-center text-lg mx-auto mb-8">
+                    Practice your coding skills by solving problems on a variety of topics. 
+                    Click on a problem to view the details and submit your solution.
+                </p>
                 <div className="flex justify-center items-center mb-8">
                     <div className="flex space-x-4">
                         {problemCategories.map((category) => (
