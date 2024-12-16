@@ -1,8 +1,10 @@
 "use client"
 
 import Link from 'next/link'
-import { Code, User, BookOpen, Trophy, Newspaper } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { Code, BookOpen, Newspaper } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { RootState } from '@/states/store'
+import { useAppSelector } from '@/hooks/redux'
 
 export default function Header() {
     const navItems = [
@@ -22,6 +24,14 @@ export default function Header() {
             label: 'Blogs' 
         }
     ]
+
+    const user = useAppSelector((state: RootState) => state.authSlice.user)
+
+    const router = useRouter()
+
+    if (!user) {
+        router.replace("/login")
+    }
 
     const path = usePathname()
 
