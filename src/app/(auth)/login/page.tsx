@@ -16,13 +16,22 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { loginAction } from "@/actions/auth"
+import { startTransition, useActionState } from "react"
+import { toast } from "sonner"
 
 const loginFormSchema = z.object({
     identifier: z.string({message: "Please provide your email or username"}),
-    password: z.string({message: "Please provide your password"}).min(6, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
+    password: z.string({message: "Please provide your password"}).min(8, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
 })
 
+const initialState = {
+    message: "",
+}
+
 export default function LoginPage() {
+    const [state, formAction, pending] = useActionState(loginAction, initialState)
+
     const form = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
@@ -31,8 +40,14 @@ export default function LoginPage() {
         }
     })
 
-    const onSubmit = (data: z.infer<typeof loginFormSchema>) => {
-        console.log(data)
+    const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
+        const formData = new FormData()
+        formData.append("identifier", data.identifier)
+        formData.append("password", data.password)
+        startTransition(()=>{
+            formAction(formData)
+        })
+        toast(state?.message)
     }
 
     return (
@@ -95,7 +110,7 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        <Button disabled={pending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                             Sign In
                         </Button>
                     </form>

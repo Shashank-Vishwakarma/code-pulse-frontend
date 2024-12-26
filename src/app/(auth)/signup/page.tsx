@@ -16,18 +16,29 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { startTransition, useActionState } from "react"
+import { signUpAction } from "@/actions/auth"
+import { toast } from "sonner"
 
 const signUpFormSchema = z.object({
+    name: z.string({message: "Please provide your name"}),
     email: z.string({message: "Please provide your email"}).email({message: "Please provide a valid email address"}),
     username: z.string({message: "Please provide your username"}).min(3, {message: "Username must be at least 3 characters"}).max(20, {message: "Username must be at most 20 characters"}),
-    password: z.string({message: "Please provide your password"}).min(6, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
-    confirmPassword: z.string({message: "Please provide confirm password"}).min(6, {message: "Confirm Password must be at least 6 characters"}).max(20, {message: "Confirm Password must be at most 20 characters"}),
+    password: z.string({message: "Please provide your password"}).min(8, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
+    confirmPassword: z.string({message: "Please provide confirm password"}).min(8, {message: "Confirm Password must be at least 6 characters"}).max(20, {message: "Confirm Password must be at most 20 characters"}),
 })
 
+const initialState = {
+    message: "",
+}
+
 export default function SignUpPage() {
+    const [state, formAction, pending] = useActionState(signUpAction, initialState)
+
     const form = useForm<z.infer<typeof signUpFormSchema>>({
         resolver: zodResolver(signUpFormSchema),
         defaultValues: {
+            name: "",
             email: "",
             username: "",
             password: "",
@@ -36,7 +47,16 @@ export default function SignUpPage() {
     })
 
     const onSubmit = (data: z.infer<typeof signUpFormSchema>) => {
-        console.log(data)
+        const formData = new FormData()
+        formData.append("name", data.name)
+        formData.append("email", data.email)
+        formData.append("username", data.username)
+        formData.append("password", data.password)
+        formData.append("confirmPassword", data.confirmPassword)
+        startTransition(()=>{
+            formAction(formData)
+        })
+        toast(state?.message)
     }
 
     return (
@@ -49,6 +69,25 @@ export default function SignUpPage() {
                 </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-white">
+                                    Name
+                                </FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        placeholder="John Doe" 
+                                        {...field} 
+                                        className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:ring-blue-500"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
                         <FormField
                         control={form.control}
                         name="email"
@@ -128,7 +167,7 @@ export default function SignUpPage() {
                         )}
                         />
 
-                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        <Button disabled={pending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                             Sign Up
                         </Button>
                     </form>
