@@ -12,12 +12,12 @@ export async function loginAction(prevState: any, formData: FormData) {
             }
         )
         if (!response.data) {
-            return {message: response.data?.message}
+            return {message: response.data?.message, success: false}
         }
-        return {message: response.data?.message}
+        return {message: response.data?.message, success: true}
     } catch (error) {
         console.log("Error in loginAction", error)
-        return {message: "Something went wrong"}
+        return {message: "Something went wrong", success: false}
     }
 }
 
@@ -34,11 +34,11 @@ export async function signUpAction(prevState: any, formData: FormData) {
             }
         )
         if (!response.data) {
-            return {message: response.data?.message}
+            return {message: response.data?.message, success: false}
         }
-        return {message: response.data?.message}
+        return {message: response.data?.message, success: true}
     } catch (error) {
         console.log("Error in signupAction", error)
-        return {message: "Something went wrong"}
+        return {message: "Something went wrong", success: false}
     }
 }

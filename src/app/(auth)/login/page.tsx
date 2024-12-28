@@ -17,8 +17,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginAction } from "@/actions/auth"
-import { startTransition, useActionState } from "react"
+import { startTransition, useActionState, useEffect } from "react"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const loginFormSchema = z.object({
     identifier: z.string({message: "Please provide your email or username"}),
@@ -27,10 +28,13 @@ const loginFormSchema = z.object({
 
 const initialState = {
     message: "",
+    success: false,
 }
 
 export default function LoginPage() {
     const [state, formAction, pending] = useActionState(loginAction, initialState)
+
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
@@ -47,8 +51,16 @@ export default function LoginPage() {
         startTransition(()=>{
             formAction(formData)
         })
-        toast(state?.message)
     }
+
+    useEffect(() => {
+        if (state?.success) {
+            toast.success(state?.message)
+            router.replace("/problems")
+        } else {
+            toast.error(state?.message)
+        }
+    }, [state])
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex items-center justify-center px-4 py-12">
