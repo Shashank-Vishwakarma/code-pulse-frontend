@@ -18,7 +18,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useState } from "react"
 import { useAppDispatch } from "@/hooks/redux"
 import { setUser } from "@/states/slices/authSlice"
@@ -54,6 +54,7 @@ export default function LoginPage() {
                     withCredentials: true,
                 }
             )
+            console.log(response.data)
             if (!response.data) {
                 toast.error(response.data?.message)
                 return
@@ -64,7 +65,11 @@ export default function LoginPage() {
             router.replace("/problems")
         } catch (error) {
             console.log("Error in login", error)
-            toast.error("Something went wrong")
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data?.message)
+            } else {
+                toast.error("Something went wrong")
+            }
         } finally {
             setIsPending(false)
         }

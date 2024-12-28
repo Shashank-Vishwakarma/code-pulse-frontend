@@ -18,7 +18,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useState } from "react"
 
 const signUpFormSchema = z.object({
@@ -65,7 +65,11 @@ export default function SignUpPage() {
             router.replace("/verify-email")
         } catch (error) {
             console.log("Error in signup", error)
-            toast.error("Something went wrong")
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data?.message)
+            } else {
+                toast.error("Something went wrong")
+            }
         } finally {
             setIsPending(false)
         }

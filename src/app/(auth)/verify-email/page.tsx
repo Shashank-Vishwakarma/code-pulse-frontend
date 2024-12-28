@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -48,8 +48,12 @@ export default function VerifyEmailPage() {
             toast.success(response.data?.message)
             router.replace("/login")
         } catch (error) {
-            console.log(error)
-            toast.error("Something went wrong")
+            console.log("Error in verify email", error)
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data?.message)
+            } else {
+                toast.error("Something went wrong")
+            }
         } finally {
             setIsPending(false)
         }
