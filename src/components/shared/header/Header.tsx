@@ -4,8 +4,12 @@ import Link from 'next/link'
 import { Code, BookOpen, Newspaper } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/states/store'
-import { useAppSelector } from '@/hooks/redux'
-import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useEffect, useState } from 'react'
+import { AlertDialogComponent } from '../alert-dialog/AlertDialog'
+import { toast } from 'sonner'
+import axios from 'axios'
+import { setUser } from '@/states/slices/authSlice'
 
 export default function Header() {
     const navItems = [
@@ -27,7 +31,7 @@ export default function Header() {
     ]
 
     const user = useAppSelector((state: RootState) => state.authSlice.user)
-
+    const dispatch = useAppDispatch()
     const router = useRouter()
 
     useEffect(()=>{
@@ -37,6 +41,37 @@ export default function Header() {
     },[user])
 
     const path = usePathname()
+
+    const [open, setOpen] = useState(false)
+
+    const onOpenChange = () => {
+        setOpen(prev => !prev)
+    }
+
+    const onContinue = async () => {
+        try {
+            const response = await axios.post(
+                "http://localhost:8000/api/v1/auth/logout",
+                {},
+                {
+                    withCredentials: true,
+                }
+            )
+            if (!response.data) {
+                toast.error(response.data?.message)
+                return
+            }
+            toast.success(response.data?.message)
+            localStorage.removeItem("user")
+            dispatch(setUser(null))
+            router.replace("/login")
+        } catch (error) {
+            console.log("Error in logout", error)
+            toast.error("Something went wrong")
+        } finally {
+            setOpen(false)
+        }
+    }
 
     return (
         <header className="bg-gray-900/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 mb-4">
@@ -64,12 +99,12 @@ export default function Header() {
                 <div className="flex items-center space-x-4">
                     {
                         user ? (
-                            <Link 
-                                href="/logout" 
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-colors"
-                            >
-                                Logout
-                            </Link>
+                            <AlertDialogComponent 
+                                open={open} onOpenChange={onOpenChange}
+                                title='Logout'
+                                description='Are you sure you want to logout?' 
+                                onContinue={onContinue}
+                            />
                         ) : (
                             <Link 
                                 href="/login" 
