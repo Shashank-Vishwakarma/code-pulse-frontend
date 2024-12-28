@@ -16,10 +16,10 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { startTransition, useActionState, useEffect } from "react"
-import { signUpAction } from "@/actions/auth"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import axios from "axios"
+import { useState } from "react"
 
 const signUpFormSchema = z.object({
     name: z.string({message: "Please provide your name"}),
@@ -29,14 +29,8 @@ const signUpFormSchema = z.object({
     confirmPassword: z.string({message: "Please provide confirm password"}).min(8, {message: "Confirm Password must be at least 6 characters"}).max(20, {message: "Confirm Password must be at most 20 characters"}),
 })
 
-const initialState = {
-    message: "",
-    success: false,
-}
-
 export default function SignUpPage() {
-    const [state, formAction, pending] = useActionState(signUpAction, initialState)
-    
+    const [isPending, setIsPending] = useState(false)
     const router = useRouter()
 
     const form = useForm<z.infer<typeof signUpFormSchema>>({
@@ -50,26 +44,32 @@ export default function SignUpPage() {
         }
     })
 
-    const onSubmit = (data: z.infer<typeof signUpFormSchema>) => {
-        const formData = new FormData()
-        formData.append("name", data.name)
-        formData.append("email", data.email)
-        formData.append("username", data.username)
-        formData.append("password", data.password)
-        formData.append("confirmPassword", data.confirmPassword)
-        startTransition(()=>{
-            formAction(formData)
-        })
-    }
-
-    useEffect(() => {
-        if (state?.success) {
-            toast.success(state?.message)
+    const onSubmit = async (data: z.infer<typeof signUpFormSchema>) => {
+        setIsPending(true)
+        try {
+            const response = await axios.post(
+                "http://localhost:8000/api/v1/auth/register",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                },
+            )
+            if (!response.data) {
+                toast.error(response.data?.message)
+                return
+            }
+            toast.success(response.data?.message)
             router.replace("/verify-email")
-        } else {
-            toast.error(state?.message)
+        } catch (error) {
+            console.log("Error in signup", error)
+            toast.error("Something went wrong")
+        } finally {
+            setIsPending(false)
         }
-    }, [state])
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex items-center justify-center px-4 py-12">
@@ -179,8 +179,8 @@ export default function SignUpPage() {
                         )}
                         />
 
-                        <Button disabled={pending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                            Sign Up
+                        <Button disabled={isPending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                            {isPending ? "Signing up..." : "Sign Up"}
                         </Button>
                     </form>
                 </Form>

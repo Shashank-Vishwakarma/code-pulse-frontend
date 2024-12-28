@@ -16,25 +16,22 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { loginAction } from "@/actions/auth"
-import { startTransition, useActionState, useEffect } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import axios from "axios"
+import { useState } from "react"
+import { useAppDispatch } from "@/hooks/redux"
+import { setUser } from "@/states/slices/authSlice"
 
 const loginFormSchema = z.object({
     identifier: z.string({message: "Please provide your email or username"}),
     password: z.string({message: "Please provide your password"}).min(8, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
 })
 
-const initialState = {
-    message: "",
-    success: false,
-}
-
 export default function LoginPage() {
-    const [state, formAction, pending] = useActionState(loginAction, initialState)
-
+    const [isPending, setIsPending] = useState(false)
     const router = useRouter()
+    const dispatch = useAppDispatch()
 
     const form = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
@@ -45,22 +42,33 @@ export default function LoginPage() {
     })
 
     const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
-        const formData = new FormData()
-        formData.append("identifier", data.identifier)
-        formData.append("password", data.password)
-        startTransition(()=>{
-            formAction(formData)
-        })
-    }
-
-    useEffect(() => {
-        if (state?.success) {
-            toast.success(state?.message)
+        setIsPending(true)
+        try {
+            const response = await axios.post(
+                "http://localhost:8000/api/v1/auth/login",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                }
+            )
+            if (!response.data) {
+                toast.error(response.data?.message)
+                return
+            }
+            toast.success(response.data?.message)
+            dispatch(setUser(response.data?.data))
+            localStorage.setItem("user", JSON.stringify(response.data?.data))
             router.replace("/problems")
-        } else {
-            toast.error(state?.message)
+        } catch (error) {
+            console.log("Error in login", error)
+            toast.error("Something went wrong")
+        } finally {
+            setIsPending(false)
         }
-    }, [state])
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex items-center justify-center px-4 py-12">
@@ -122,8 +130,8 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <Button disabled={pending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                            Sign In
+                        <Button disabled={isPending} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                            {isPending ? "Signing In..." : "Sign In"}
                         </Button>
                     </form>
                 </Form>

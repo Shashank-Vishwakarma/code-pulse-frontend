@@ -5,6 +5,7 @@ import { Code, BookOpen, Newspaper } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/states/store'
 import { useAppSelector } from '@/hooks/redux'
+import { useEffect } from 'react'
 
 export default function Header() {
     const navItems = [
@@ -29,9 +30,11 @@ export default function Header() {
 
     const router = useRouter()
 
-    if (!user) {
-        router.replace("/login")
-    }
+    useEffect(()=>{
+        if (!user) {
+            router.replace("/login")
+        }
+    },[user])
 
     const path = usePathname()
 
@@ -59,12 +62,23 @@ export default function Header() {
                 </nav>
 
                 <div className="flex items-center space-x-4">
-                    <Link 
-                        href="/login" 
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-colors"
-                    >
-                        Login
-                    </Link>
+                    {
+                        user ? (
+                            <Link 
+                                href="/logout" 
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-colors"
+                            >
+                                Logout
+                            </Link>
+                        ) : (
+                            <Link 
+                                href="/login" 
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-colors"
+                            >
+                                Login
+                            </Link>
+                        )
+                    }
                 </div>
             </div>
         </header>
