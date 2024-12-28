@@ -33,14 +33,15 @@ export default function Header() {
     const user = useAppSelector((state: RootState) => state.authSlice.user)
     const dispatch = useAppDispatch()
     const router = useRouter()
+    const path = usePathname()
 
     useEffect(()=>{
         if (!user) {
-            router.replace("/login")
+            if (path !== "/") {
+                router.replace("/login")
+            }
         }
     },[user])
-
-    const path = usePathname()
 
     const [open, setOpen] = useState(false)
 
@@ -62,7 +63,7 @@ export default function Header() {
                 return
             }
             toast.success(response.data?.message)
-            localStorage.removeItem("user")
+            window.localStorage.removeItem("user")
             dispatch(setUser(null))
             router.replace("/login")
         } catch (error) {
@@ -82,7 +83,7 @@ export default function Header() {
                 </Link>
                 
                 <nav className="flex space-x-6">
-                    {navItems.map((item) => (
+                    {user && navItems.map((item) => (
                         <Link 
                             key={item.href}
                             href={item.href} 

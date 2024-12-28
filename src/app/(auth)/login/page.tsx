@@ -60,7 +60,7 @@ export default function LoginPage() {
             }
             toast.success(response.data?.message)
             dispatch(setUser(response.data?.data))
-            localStorage.setItem("user", JSON.stringify(response.data?.data))
+            window.localStorage.setItem("user", JSON.stringify(response.data?.data))
             router.replace("/problems")
         } catch (error) {
             console.log("Error in login", error)
