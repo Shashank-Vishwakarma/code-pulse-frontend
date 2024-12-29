@@ -6,10 +6,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/states/store'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useEffect, useState } from 'react'
-import { AlertDialogComponent } from '../alert-dialog/AlertDialog'
 import { toast } from 'sonner'
 import axios from 'axios'
 import { setUser } from '@/states/slices/authSlice'
+import { Profile } from './Profile'
 
 export default function Header() {
     const navItems = [
@@ -100,12 +100,7 @@ export default function Header() {
                 <div className="flex items-center space-x-4">
                     {
                         user ? (
-                            <AlertDialogComponent 
-                                open={open} onOpenChange={onOpenChange}
-                                title='Logout'
-                                description='Are you sure you want to logout?' 
-                                onContinue={onContinue}
-                            />
+                            <Profile />
                         ) : (
                             <Link 
                                 href="/login" 
