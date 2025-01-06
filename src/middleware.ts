@@ -1,3 +1,5 @@
-export default function middleware(request: Request) {
+import { NextRequest, NextResponse } from "next/server"
+
+export function middleware(request: NextRequest) {
     
 }
