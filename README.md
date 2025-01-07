@@ -8,5 +8,6 @@ Code Pulse is a comprehensive online learning platform designed to empower devel
 - **Styling**: Tailwind CSS
 - **UI Components**: Shadcn UI
 - **HTTP Client**: Axios
+- **API Calls**: Redux Toolkit Query (RTK Query)
 
 ## Key Features
