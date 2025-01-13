@@ -1,88 +1,48 @@
-import React from 'react'
+"use client"
+
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Search } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useGetBlogsQuery } from '@/states/apis/blogApi'
 import Image from 'next/image'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-
-interface BlogPost {
-    id: string
-    title: string
-    body: string
-    createdAt: Date
-}
-
-const blogPosts: BlogPost[] = [
-    {
-        id: '1',
-        title: 'Mastering React Performance',
-        body: 'Deep dive into optimizing React applications for maximum efficiency.',
-        createdAt: new Date(),
-    },
-    {
-        id: '2',
-        title: 'Next.js 14: What\'s New',
-        body: 'Exploring the latest features and improvements in Next.js 14.',
-        createdAt: new Date(),
-    },
-    {
-        id: '3',
-        title: 'State Management in Modern Web Apps',
-        body: 'Comparing different state management solutions for scalable applications.',
-        createdAt: new Date(),
-    },
-    {
-        id: '4',
-        title: 'Mastering React Performance',
-        body: 'Deep dive into optimizing React applications for maximum efficiency.',
-        createdAt: new Date(),
-    },
-    {
-        id: '5',
-        title: 'Next.js 14: What\'s New',
-        body: 'Exploring the latest features and improvements in Next.js 14.',
-        createdAt: new Date(),
-    },
-    {
-        id: '6',
-        title: 'State Management in Modern Web Apps',
-        body: 'Comparing different state management solutions for scalable applications.',
-        createdAt: new Date(),
-    },
-    {
-        id: '7',
-        title: 'Mastering React Performance',
-        body: 'Deep dive into optimizing React applications for maximum efficiency.',
-        createdAt: new Date(),
-    },
-    {
-        id: '8',
-        title: 'Next.js 14: What\'s New',
-        body: 'Exploring the latest features and improvements in Next.js 14.',
-        createdAt: new Date(),
-    },
-    {
-        id: '9',
-        title: 'State Management in Modern Web Apps',
-        body: 'Comparing different state management solutions for scalable applications.',
-        createdAt: new Date(),
-    }
-]
+import { useDebounce } from '@/hooks/useDebounce'
 
 export default function BlogsPage() {
+    const [searchQuery, setSearchQuery] = useState('')
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+    const {data, error, isLoading} = useGetBlogsQuery(debouncedSearchQuery);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col px-4 py-12">
             <div className="text-center mb-12 h-1/4">
                 <h1 className="text-4xl md:text-5xl font-bold text-green-400 mb-4">
-                    Code Pulse Blog
+                    CodePulse Blog
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                     Insights, tutorials, and thoughts on web development, technology, and innovation.
                 </p>
             </div>
 
+            <div className="w-full mx-auto mb-12 flex flex-row justify-center items-center">
+                <Input 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    type='text' 
+                    placeholder="Search blog posts" 
+                    className="w-1/2 px-4 py-2 rounded-md bg-gray-800 text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"  
+                />
+                <Button className="m-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                    <Search className="h-5 w-5" />
+                </Button>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
-                {blogPosts.map((post) => (
+                {data?.data && data?.data.map((post) => (
                     <Link 
-                        href={`/blogs/${post.id}`} 
+                        href={`/blogs/${post.slug}`} 
                         key={post.id} 
                     >
                         <Card key={post.id}>
@@ -96,21 +56,43 @@ export default function BlogsPage() {
                                 </CardTitle>
                                 <CardDescription>
                                     {
-                                        post.body.length > 50
-                                        ? `${post.body.substring(0, 50)}...`
+                                        post && post.body?.length > 100
+                                        ? `${post.body.substring(0, 100)}...`
                                         : post.body
                                     }
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                ff
+                                <Image 
+                                    src={post.imageUrl}
+                                    alt={post.title}
+                                    className='w-full h-40 object-cover rounded-md'
+                                    width={400}
+                                    height={300}
+                                />
                             </CardContent>
                         </Card>
                     </Link>
                 ))}
             </div>
 
-            {blogPosts.length === 0 && (
+            {isLoading && (
+                <div className="text-center py-12">
+                    <p className="text-xl text-gray-500">
+                        Loading blog posts...
+                    </p>
+                </div>
+            )}
+
+            {error && (
+                <div className="text-center py-12">
+                    <p className="text-xl text-gray-500">
+                        An error occurred while fetching blog posts.
+                    </p>
+                </div>
+            )}
+
+            {data?.data && data?.data?.length === 0 && (
                 <div className="text-center py-12">
                     <p className="text-xl text-gray-500">
                         No blog posts available yet. Check back soon!
