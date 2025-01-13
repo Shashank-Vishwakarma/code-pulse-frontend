@@ -26,6 +26,7 @@ export default function BlogsPage() {
                 </p>
             </div>
 
+            {/* Used deboucing fot search and automatic fetch data using RTK Query */}
             <div className="w-full mx-auto mb-12 flex flex-row justify-center items-center">
                 <Input 
                     value={searchQuery}
@@ -34,9 +35,6 @@ export default function BlogsPage() {
                     placeholder="Search blog posts" 
                     className="w-1/2 px-4 py-2 rounded-md bg-gray-800 text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"  
                 />
-                <Button className="m-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
-                    <Search className="h-5 w-5" />
-                </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
