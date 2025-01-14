@@ -3,27 +3,42 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { useGetBlogsQuery } from '@/states/apis/blogApi'
 import Image from 'next/image'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useRouter } from 'next/navigation'
 
 export default function BlogsPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const debouncedSearchQuery = useDebounce(searchQuery, 500);
     const {data, error, isLoading} = useGetBlogsQuery(debouncedSearchQuery);
 
+    const router = useRouter();
+
+    useEffect(() => {
+        if (debouncedSearchQuery) {
+            router.push("/blogs?q=" + debouncedSearchQuery);
+        } else {
+            router.push("/blogs");
+        }
+    }, [debouncedSearchQuery, router]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col px-4 py-12">
-            <div className="text-center mb-12 h-1/4">
+            <div className="text-center mb-4 h-1/4">
                 <h1 className="text-4xl md:text-5xl font-bold text-green-400 mb-4">
                     CodePulse Blog
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                     Insights, tutorials, and thoughts on web development, technology, and innovation.
                 </p>
+            </div>
+
+            <div className='flex justify-center mb-4'>
+                <Link href='/blogs/create' className='rounded-full px-4 py-2 bg-blue-500 text-white font-bold'>
+                    Create Blog
+                </Link>
             </div>
 
             {/* Used deboucing fot search and automatic fetch data using RTK Query */}
@@ -40,7 +55,12 @@ export default function BlogsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
                 {data?.data && data?.data.map((post) => (
                     <Link 
-                        href={`/blogs/${post.slug}`} 
+                        href={{
+                            pathname: `/blogs/${post.slug}`,
+                            query: {
+                                id: post.id
+                            }
+                        }} 
                         key={post.id} 
                     >
                         <Card key={post.id}>
