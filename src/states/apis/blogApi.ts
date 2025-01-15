@@ -45,6 +45,14 @@ export const blogApi = createApi({
             query: (id) => `/${id}`,
             providesTags: ['Blog']
         }),
+        createBlog: builder.mutation({
+            query: (data: FormData) => ({
+                url: '/create',
+                body: data,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Blogs']
+        }),
         updateBlog: builder.mutation({
             query: ({id, data}) => ({
                 url: `/${id}`,
@@ -63,4 +71,4 @@ export const blogApi = createApi({
     })
 })
 
-export const {useGetBlogsQuery, useGetBlogByIdQuery, useUpdateBlogMutation, useDeleteBlogMutation} = blogApi
+export const {useGetBlogsQuery, useGetBlogByIdQuery, useCreateBlogMutation, useUpdateBlogMutation, useDeleteBlogMutation} = blogApi

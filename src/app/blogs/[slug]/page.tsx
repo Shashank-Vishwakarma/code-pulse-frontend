@@ -1,54 +1,23 @@
 "use client"
 
-import { Button } from '@/components/ui/button';
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetBlogByIdQuery } from '@/states/apis/blogApi';
 import Image from 'next/image';
 import { useParams } from 'next/navigation'
-import { useRouter } from 'next/router';
 import React from 'react'
 
 export default function BlogPage() {
     const {slug} = useParams();
-    const url = window.location.href;
-    const q = url.split("?").pop();
-    const id = q?.split("=").pop();
-    
-    const {data, error, isLoading} = useGetBlogByIdQuery(id as string);
-    
-    if (error) {
-        return (
-            <div className='flex justify-center items-center h-screen'>
-                <h1 className='text-2xl font-bold text-red-500'>Blog not found</h1>
-            </div>
-        )
-    }
 
-    if (isLoading) {
-        return (
-            <div className='flex justify-center items-center h-screen'>
-                <h1 className='text-2xl font-bold text-blue-500'>Loading...</h1>
-            </div>
-        )
-    }
-
-    if (data && data.data.slug !== slug) {
-        return (
-            <div className='flex justify-center items-center h-screen'>
-                <h1 className='text-2xl font-bold text-red-500'>Blog not found</h1>
-            </div>
-        )
-    }
-
-    console.log(data)
+    const {data} = useGetBlogByIdQuery(slug as string);
 
     return (
         <div className='h-screen flex flex-col justify-center gap-4 bg-gradient-to-br from-gray-200 to-gray-300'>
             <div className='px-10 py-4 flex-1'>
                 <Image 
                     src={data?.data.imageUrl as string} 
-                    alt={data?.data.title as string} 
+                    alt={data?.data.title || "Blog Image"}
                     width={1000} 
                     height={1000} 
                     className='w-full h-96 object-cover rounded-lg' 

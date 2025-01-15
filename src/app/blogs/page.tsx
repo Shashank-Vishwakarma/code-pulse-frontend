@@ -55,12 +55,7 @@ export default function BlogsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
                 {data?.data && data?.data.map((post) => (
                     <Link 
-                        href={{
-                            pathname: `/blogs/${post.slug}`,
-                            query: {
-                                id: post.id
-                            }
-                        }} 
+                        href={`/blogs/${post.id}`}
                         key={post.id} 
                     >
                         <Card key={post.id}>
