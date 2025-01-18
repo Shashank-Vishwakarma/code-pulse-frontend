@@ -1,6 +1,8 @@
 "use client"
 
 import Header from '@/components/shared/header/Header'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useGetQuestionsQuery } from '@/states/apis/questionApi'
 import { 
     Code, 
     Database, 
@@ -9,16 +11,7 @@ import {
     Cpu, 
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-
-type Difficulty = 'Easy' | 'Medium' | 'Hard'
-
-interface Problem {
-    id: number
-    title: string
-    category: string[]
-    difficulty: Difficulty
-    acceptance: number
-}
+import { useEffect, useState } from 'react'
 
 const problemCategories = [
     { name: 'Array', icon: <Layers className="mr-2" /> },
@@ -28,103 +21,27 @@ const problemCategories = [
     { name: 'Math', icon: <Cpu className="mr-2" /> }
 ]
 
-const problems: Problem[] = [
-    {
-        id: 1,
-        title: 'Two Sum',
-        category: ['Array'],
-        difficulty: 'Easy',
-        acceptance: 49.5,
-    },
-    {
-        id: 2,
-        title: 'Add Two Numbers',
-        category: ['Linked List', 'Array'],
-        difficulty: 'Medium',
-        acceptance: 38.2,
-    },
-    {
-        id: 3,
-        title: 'Longest Substring Without Repeating Characters',
-        category: ['String'],
-        difficulty: 'Medium',
-        acceptance: 33.7,
-    },
-    {
-        id: 4,
-        title: 'Median of Two Sorted Arrays',
-        category: ['Array'],
-        difficulty: 'Hard',
-        acceptance: 35.6,
-    },
-    {
-        id: 5,
-        title: 'Two Sum',
-        category: ['Array'],
-        difficulty: 'Easy',
-        acceptance: 49.5,
-    },
-    {
-        id: 6,
-        title: 'Add Two Numbers',
-        category: ['Linked List', 'Array'],
-        difficulty: 'Medium',
-        acceptance: 38.2,
-    },
-    {
-        id: 7,
-        title: 'Longest Substring Without Repeating Characters',
-        category: ['String'],
-        difficulty: 'Medium',
-        acceptance: 33.7,
-    },
-    {
-        id: 8,
-        title: 'Median of Two Sorted Arrays',
-        category: ['Array'],
-        difficulty: 'Hard',
-        acceptance: 35.6,
-    },
-    {
-        id: 9,
-        title: 'Two Sum',
-        category: ['Array'],
-        difficulty: 'Easy',
-        acceptance: 49.5,
-    },
-    {
-        id: 10,
-        title: 'Add Two Numbers',
-        category: ['Linked List', 'Array'],
-        difficulty: 'Medium',
-        acceptance: 38.2,
-    },
-    {
-        id: 11,
-        title: 'Longest Substring Without Repeating Characters',
-        category: ['String'],
-        difficulty: 'Medium',
-        acceptance: 33.7,
-    },
-    {
-        id: 12,
-        title: 'Median of Two Sorted Arrays',
-        category: ['Array'],
-        difficulty: 'Hard',
-        acceptance: 35.6,
-    }
-]
-
 export default function ProblemsPage() {
+    const [searchQuery, setSearchQuery] = useState('')
+    const searchQueryDebounced = useDebounce(searchQuery, 500);
+    const { data, error, isLoading } = useGetQuestionsQuery(searchQueryDebounced)
     const router = useRouter()
 
-    const getDifficultyColor = (difficulty: Difficulty) => {
+    const getDifficultyColor = (difficulty: string) => {
         switch (difficulty) {
             case 'Easy': return 'text-green-500'
             case 'Medium': return 'text-yellow-500'
             case 'Hard': return 'text-red-500'
         }
     }
+
+    useEffect(() => {
+        if (searchQueryDebounced) {
+            router.push("/problems?q=" + searchQueryDebounced);
+        } else {
+            router.push("/problems");
+        }
+    }, [searchQueryDebounced, router]);
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">
@@ -156,15 +73,14 @@ export default function ProblemsPage() {
                                 <th className="px-6 py-3 text-left">Title</th>
                                 <th className="px-6 py-3 text-left">Category</th>
                                 <th className="px-6 py-3 text-left">Difficulty</th>
-                                <th className="px-6 py-3 text-left">Acceptance</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {problems.map((problem) => (
-                                <tr onClick={()=> router.push(`/problems/${problem.id}`)} key={problem.id} className="border-b border-white/10 hover:bg-white/20 transition-colors cursor-pointer">
+                            {data?.data && data?.data?.map((problem) => (
+                                <tr onClick={()=> router.push(`/problems/${problem.slug}?id=${problem.id}`)} key={problem.id} className="border-b border-white/10 hover:bg-white/20 transition-colors cursor-pointer">
                                     <td className="px-6 py-4">{problem.title}</td>
                                     <td className="px-6 py-4">
-                                        {problem.category.map((category) => (
+                                        {problem.tags.map((category) => (
                                             <span key={category} className="mr-2 bg-white/10 px-2 py-1 rounded-full">
                                                 {category}
                                             </span>
@@ -173,7 +89,6 @@ export default function ProblemsPage() {
                                     <td className={`px-6 py-4 font-semibold ${getDifficultyColor(problem.difficulty)}`}>
                                         {problem.difficulty}
                                     </td>
-                                    <td className="px-6 py-4">{problem.acceptance}%</td>
                                 </tr>
                             ))}
                         </tbody>
