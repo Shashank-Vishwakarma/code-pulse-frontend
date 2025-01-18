@@ -6,10 +6,10 @@ import { useGetBlogByIdQuery } from '@/states/apis/blogApi';
 import Image from 'next/image';
 import { useParams } from 'next/navigation'
 import React from 'react'
+import Markdown from 'react-markdown';
 
 export default function BlogPage() {
     const {slug} = useParams();
-
     const {data} = useGetBlogByIdQuery(slug as string);
 
     return (
@@ -25,7 +25,7 @@ export default function BlogPage() {
             </div>
             <div className='text-black flex-1 px-10'>
                 <h1 className='bg-gray-300 text-2xl font-bold text-center p-4 rounded-lg'>{data?.data.title}</h1>
-                <p className='mt-4'>{data?.data.body}</p>
+                <Markdown children={data?.data.body} className='mt-4 bg-gray-300 px-10 py-2 rounded-lg'/>
             </div>
             <div className='px-10 py-4 w-full flex justify-center'>
                 <Drawer>
