@@ -19,9 +19,9 @@ export default function Header() {
             label: 'Problems' 
         },
         { 
-            href: '/learn', 
+            href: '/challenges', 
             icon: <BookOpen className="mr-2" />, 
-            label: 'Learn' 
+            label: 'Challenges' 
         },
         { 
             href: '/blogs', 

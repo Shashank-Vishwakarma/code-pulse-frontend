@@ -3,23 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link'
 import React from 'react'
 
-export default function LearnPage() {
+export default function ChallengesPage() {
     const quizzes = [
         {
             name: 'SQL',
             description: 'Test your SQL skills with our interactive quiz',
-            href: '/learn/sql',
+            href: '/sql',
         },
         {
             name: 'Redis',
             description: 'Test your Redis skills with our interactive quiz',
-            href: '/learn/redis',
-        },
-        {
-            name: 'System Design',
-            description: 'Test your System Design skills with our interactive quiz',
-            href: '/learn/system-design',
-        },
+            href: '/redis',
+        }
     ]
 
     return (
@@ -27,9 +22,15 @@ export default function LearnPage() {
             <div className="p-4">
                 <Header />
             </div>
+            <div className="text-center">
+                <p className="text-2xl font-bold text-green-400">
+                    Practice Quizzes to Improve Your Coding Skills
+                </p>
+            </div>
+
             <div className="flex flex-wrap justify-center">
                 {quizzes.map(quiz => (
-                    <Link key={quiz.name} href={quiz.href} className="w-full md:w-1/2 xl:w-1/3 p-6">
+                    <Link key={quiz.name} href={`challenges/${quiz.href}`} className="w-full md:w-1/2 xl:w-1/3 p-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>{quiz.name}</CardTitle>
