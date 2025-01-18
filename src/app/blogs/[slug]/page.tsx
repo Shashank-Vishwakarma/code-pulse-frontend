@@ -4,13 +4,13 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, D
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetBlogByIdQuery } from '@/states/apis/blogApi';
 import Image from 'next/image';
-import { useParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 import React from 'react'
 import Markdown from 'react-markdown';
 
 export default function BlogPage() {
-    const {slug} = useParams();
-    const {data} = useGetBlogByIdQuery(slug as string);
+    const params = useSearchParams()
+    const {data} = useGetBlogByIdQuery(params?.get('id') as string);
 
     return (
         <div className='h-screen flex flex-col justify-center gap-4 bg-gradient-to-br from-gray-200 to-gray-300'>

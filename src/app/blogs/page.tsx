@@ -8,6 +8,7 @@ import { useGetBlogsQuery } from '@/states/apis/blogApi'
 import Image from 'next/image'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useRouter } from 'next/navigation'
+import Header from '@/components/shared/header/Header'
 
 export default function BlogsPage() {
     const [searchQuery, setSearchQuery] = useState('')
@@ -26,6 +27,10 @@ export default function BlogsPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col px-4 py-12">
+            <div className="p-4">
+                <Header />
+            </div>
+
             <div className="text-center mb-4 h-1/4">
                 <h1 className="text-4xl md:text-5xl font-bold text-green-400 mb-4">
                     CodePulse Blog
@@ -55,7 +60,7 @@ export default function BlogsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
                 {data?.data && data?.data.map((post) => (
                     <Link 
-                        href={`/blogs/${post.id}`}
+                        href={`/blogs/${post.slug}`}
                         key={post.id} 
                     >
                         <Card key={post.id}>
@@ -89,29 +94,31 @@ export default function BlogsPage() {
                 ))}
             </div>
 
-            {isLoading && (
-                <div className="text-center py-12">
-                    <p className="text-xl text-gray-500">
-                        Loading blog posts...
-                    </p>
-                </div>
-            )}
+            <div className=''>
+                {isLoading && (
+                    <div className="text-center py-12">
+                        <p className="text-xl text-gray-400">
+                            Loading blog posts...
+                        </p>
+                    </div>
+                )}
 
-            {error && (
-                <div className="text-center py-12">
-                    <p className="text-xl text-gray-500">
-                        An error occurred while fetching blog posts.
-                    </p>
-                </div>
-            )}
+                {error && (
+                    <div className="text-center py-12">
+                        <p className="text-xl text-gray-400">
+                            An error occurred while fetching blog posts.
+                        </p>
+                    </div>
+                )}
 
-            {data?.data && data?.data?.length === 0 && (
-                <div className="text-center py-12">
-                    <p className="text-xl text-gray-500">
-                        No blog posts available yet. Check back soon!
-                    </p>
-                </div>
-            )}
+                {!isLoading && data?.data == null && (
+                    <div className="text-center py-12">
+                        <p className="text-xl text-gray-400">
+                            No blog posts available yet. Check back soon!
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

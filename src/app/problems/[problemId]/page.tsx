@@ -33,6 +33,9 @@ export default function ProblemPage() {
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">
+            <div className="p-4 mb-8">
+                <Header />
+            </div>
             <div className="flex flex-1 overflow-hidden">
                 <ScrollArea className="w-2/5 overflow-y-auto border-r p-4">
                     <ProblemDescription 
