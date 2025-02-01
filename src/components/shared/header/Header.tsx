@@ -4,11 +4,8 @@ import Link from 'next/link'
 import { Code, BookOpen, Newspaper } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/states/store'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import axios from 'axios'
-import { setUser } from '@/states/slices/authSlice'
+import { useAppSelector } from '@/hooks/redux'
+import { useEffect } from 'react'
 import { Profile } from './Profile'
 
 export default function Header() {
@@ -31,7 +28,6 @@ export default function Header() {
     ]
 
     const user = useAppSelector((state: RootState) => state.authSlice.user)
-    const dispatch = useAppDispatch()
     const router = useRouter()
     const path = usePathname()
 
@@ -42,37 +38,6 @@ export default function Header() {
             }
         }
     },[user])
-
-    const [open, setOpen] = useState(false)
-
-    const onOpenChange = () => {
-        setOpen(prev => !prev)
-    }
-
-    const onContinue = async () => {
-        try {
-            const response = await axios.post(
-                "http://localhost:8000/api/v1/auth/logout",
-                {},
-                {
-                    withCredentials: true,
-                }
-            )
-            if (!response.data) {
-                toast.error(response.data?.message)
-                return
-            }
-            toast.success(response.data?.message)
-            window.localStorage.removeItem("user")
-            dispatch(setUser(null))
-            router.replace("/login")
-        } catch (error) {
-            console.log("Error in logout", error)
-            toast.error("Something went wrong")
-        } finally {
-            setOpen(false)
-        }
-    }
 
     return (
         <header className="bg-gray-900/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 mb-4">
@@ -97,7 +62,7 @@ export default function Header() {
                     ))}
                 </nav>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 text-black font-bold">
                     {
                         user ? (
                             <Profile />

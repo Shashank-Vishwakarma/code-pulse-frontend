@@ -8,12 +8,12 @@ export default function ChallengesPage() {
         {
             name: 'SQL',
             description: 'Test your SQL skills with our interactive quiz',
-            href: '/sql',
+            href: 'sql',
         },
         {
             name: 'Redis',
             description: 'Test your Redis skills with our interactive quiz',
-            href: '/redis',
+            href: 'redis',
         }
     ]
 
