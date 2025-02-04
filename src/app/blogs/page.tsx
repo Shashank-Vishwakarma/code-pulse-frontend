@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/shared/header/Header'
+import BlogCard from '@/components/shared/blog-card/BlogCard'
 
 export default function BlogsPage() {
     const [searchQuery, setSearchQuery] = useState('')
@@ -57,7 +58,9 @@ export default function BlogsPage() {
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
+            <BlogCard data={data} />
+
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
                 {data?.data && data?.data.map((post) => (
                     <Link 
                         href={`/blogs/${post.slug}`}
@@ -92,7 +95,7 @@ export default function BlogsPage() {
                         </Card>
                     </Link>
                 ))}
-            </div>
+            </div> */}
 
             <div className=''>
                 {isLoading && (

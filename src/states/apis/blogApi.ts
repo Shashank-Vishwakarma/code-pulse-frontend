@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
-interface Comment {
+export interface Comment {
     id:        string
     body:      string
     userId:    string
@@ -8,7 +8,7 @@ interface Comment {
     createdAt: string
 }
 
-interface Blog {
+export interface Blog {
     id: string
     title: string
     body: string
@@ -19,12 +19,12 @@ interface Blog {
     createdAt: string
 }
 
-interface BlogData {
+export interface BlogData {
     message: string
     data: Blog[]
 }
 
-interface SingleBlog {
+export interface SingleBlog {
     message: string
     data: Blog
 }

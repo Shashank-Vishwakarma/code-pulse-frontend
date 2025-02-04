@@ -1,17 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-interface TestCase {
+export interface TestCase {
     input: string
     output: string
     explanation?: string
 }
 
-interface CodeSnippet {
+export interface CodeSnippet {
     language: string
     code: string
 }
 
-interface Question {
+export interface Question {
     id: string
     title: string
     description: string
@@ -24,12 +24,12 @@ interface Question {
     slug: string
 }
 
-interface QuestionsData {
+export interface QuestionsData {
     message: string
     data: Question[]
 }
 
-interface SingleQuestion {
+export interface SingleQuestion {
     message: string
     data: Question
 }

@@ -37,30 +37,28 @@ export function Profile() {
     }
 
     return (
-        <>
-            <Avatar className='cursor-pointer'>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <AvatarFallback>S</AvatarFallback>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className='w-56'>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem 
-                                className='cursor-pointer'
-                                onClick={() => {
-                                    router.push("/accounts/profile")
-                                }}
-                            >Profile</DropdownMenuItem>
-                            <DropdownMenuItem 
-                                className='cursor-pointer'
-                                onClick={onContinue}
-                            >Logout</DropdownMenuItem>
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </Avatar>
-        </>
+        <Avatar className='cursor-pointer'>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <AvatarFallback>S</AvatarFallback>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className='w-56'>
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem 
+                            className='cursor-pointer'
+                            onClick={() => {
+                                router.push("/accounts/profile")
+                            }}
+                        >Profile</DropdownMenuItem>
+                        <DropdownMenuItem 
+                            className='cursor-pointer'
+                            onClick={onContinue}
+                        >Logout</DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </Avatar>
     )
 }
