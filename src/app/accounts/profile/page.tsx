@@ -7,6 +7,10 @@ import { Blog, BlogData } from '@/states/apis/blogApi';
 import { Question, QuestionsData } from '@/states/apis/questionApi';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Pen, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
     title: string;
@@ -22,6 +26,7 @@ export default function ProfilePage() {
     const [data, setData] = useState<BlogData | QuestionsData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const router = useRouter()
 
     useEffect(()=>{
         console.log("activeTab: ", activeTab)
@@ -58,6 +63,60 @@ export default function ProfilePage() {
         fetchData()
     }, [activeTab])
 
+    const handleQuestionDelete = async (id: string) => {
+        try {
+            const response = await axios.delete(`http://localhost:8000/api/v1/questions/${id}`, {
+                withCredentials: true,
+            })
+            if (!response.data) {
+                return
+            }
+            toast.success(response.data?.message)
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    const handleBlogDelete = async (id: string) => {
+        try {
+            const response = await axios.delete(`http://localhost:8000/api/v1/blogs/${id}`, {
+                withCredentials: true,
+            })
+            if (!response.data) {
+                return
+            }
+            toast.success(response.data?.message)
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    const handleQuestionEdit = async (id: string) => {
+        try {
+            const response = await axios.put(`http://localhost:8000/api/v1/questions/${id}`, {
+                withCredentials: true,
+            })
+            if (!response.data) {
+                return
+            }
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    const handleBlogEdit = async (id: string) => {
+        try {
+            const response = await axios.put(`http://localhost:8000/api/v1/blogs/${id}`, {
+                withCredentials: true,
+            })
+            if (!response.data) {
+                return
+            }
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-600 to-blue-900">
             <Header />
@@ -92,16 +151,33 @@ export default function ProfilePage() {
                                         )}
 
                                         {!isLoading && activeTab === 'questions' && data?.data.length !== undefined && data?.data.length > 0 && (data?.data as Question[]).map((item: Question) => (
-                                            <Link href={`/problems/${item.slug}`} key={item.id} className='cursor-pointer flex-col'>
-                                                <p className="px-6 py-4 whitespace-nowrap bg-green-100 rounded-lg cursor-pointer font-medium">{item.title}</p>
-                                            </Link>
+                                            <div className=''>
+                                                <Button className='p-2 mb-4' onClick={()=> router.push(`/problems/create`)}>
+                                                    Submit a Question
+                                                </Button>
+                                                <div key={item.id} className='bg-green-100 rounded-lg font-medium py-4 px-2 flex flex-row items-center justify-between'>
+                                                    <Link href={`/problems/${item.slug}`}>
+                                                        <p className="cursor-pointer">{item.title}</p>
+                                                    </Link>
+                                                    <div className='flex flex-row items-center gap-2'>
+                                                        <Pen className='cursor-pointer' onClick={() => handleQuestionEdit(item.id)} />
+                                                        <Trash2 className='cursor-pointer' onClick={() => handleQuestionDelete(item.id)}/>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         ))}
 
                                         {!isLoading && activeTab === 'blogs' && data?.data.length !== undefined && data?.data.length > 0 && (data?.data as Blog[]).map((item: Blog) => (
-                                            <Link href={`/blogs/${item.slug}`} key={item.id} className='cursor-pointer bg-green-100 flex flex-row items-center p-4'>
-                                                <Image src={item.imageUrl} alt={item.title} width={200} height={200} className='object-cover' />
-                                                <p className="px-6 py-4 whitespace-nowrap  rounded-lg cursor-pointer font-medium">{item.title}</p>
-                                            </Link>
+                                            <div key={item.id} className='bg-green-100 rounded-lg font-medium py-4 px-2 flex flex-row items-center justify-between'>
+                                                <Link href={`/blogs/${item.slug}`} className='cursor-pointer flex flex-row items-center gap-2'>
+                                                    <Image src={item.imageUrl} alt={item.title} width={200} height={200} className='object-cover' />
+                                                    <p className="px-6 py-4 whitespace-nowrap  rounded-lg cursor-pointer font-medium">{item.title}</p>
+                                                </Link>
+                                                <div className='flex flex-row items-center gap-2'>
+                                                    <Pen className='cursor-pointer' onClick={() => handleBlogEdit(item.id)} />
+                                                    <Trash2 className='cursor-pointer' onClick={() => handleBlogDelete(item.id)}/>
+                                                </div>
+                                            </div>
                                         ))}
 
                                         {!isLoading && !data && (
