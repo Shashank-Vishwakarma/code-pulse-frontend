@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
 import { Button } from '@/components/ui/button'
 import { 
@@ -10,43 +10,23 @@ import {
     SelectTrigger, 
     SelectValue 
 } from '@/components/ui/select'
+import { CodeSnippet } from '@/states/apis/questionApi'
+import axios from 'axios'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
-// Predefined code templates for different languages
-const codeTemplates = {
-    python: `def twoSum(nums, target):
-    # Write your solution here
-    pass`,
-    javascript: `/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function(nums, target) {
-    // Write your solution here
-};`,
-    java: `class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        // Write your solution here
-        return new int[]{};
-    }
-}`,
-    cpp: `class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        // Write your solution here
-        return {};
-    }
-};`
-}
-
-export default function CodeEditor() {
-    const [language, setLanguage] = useState<keyof typeof codeTemplates>('python')
-    const [code, setCode] = useState(codeTemplates.python)
+export default function CodeEditor({questionId, codeSnippets}: {questionId: string, codeSnippets: CodeSnippet[] | undefined}) {
+    const [language, setLanguage] = useState('python')
+    const [code, setCode] = useState<string>("")
+    const [output, setOutput] = useState(`No Output Available`);
     const editorRef = useRef(null)
 
-    const handleLanguageChange = (selectedLanguage: keyof typeof codeTemplates) => {
-        setLanguage(selectedLanguage)
-        setCode(codeTemplates[selectedLanguage])
+    useEffect(()=>{
+        setCode(prev => codeSnippets?.find((snippet) => snippet.language.toLowerCase() === language)?.code || "")
+    }, [codeSnippets, language, setCode])
+
+    const handleLanguageChange = (selectedLanguage: string) => {
+        setLanguage(prev => selectedLanguage)
+        setCode(prev => codeSnippets?.find((snippet) => snippet.language.toLowerCase() === language)?.code || "")
     }
 
     const handleEditorMount = (editor: any) => {
@@ -54,17 +34,47 @@ export default function CodeEditor() {
     }
 
     const handleCodeChange = (value: string | undefined) => {
-        setCode(value || '')
+        setCode(value || "")
     }
 
-    const handleRun = () => {
-        // Implement code running logic
-        console.log('Running code:', code)
-    }
+    const handleExecute = async (type: string) => {
+        const payload = {
+            language: language,
+            code: code,
+            type: type,
+        }
 
-    const handleSubmit = () => {
-        // Implement code submission logic
-        console.log('Submitting code:', code)
+        const response = await axios.post(
+                `http://localhost:8000/api/v1/questions/${questionId}/execute/`,
+                payload,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                }
+            )
+        if (!response.data) {
+            setOutput(response.data.message)
+        } else {
+            let out = ``
+            for(let i = 0; i < response.data.data?.length; i++) {
+                const result = response.data.data[i]["result"] as boolean
+                if (result) {
+                    out += `Testcase ${i+1}: Passed\n`
+                } else {
+                    out += `Testcase ${i+1}: Failed\n`
+                }
+                if (type === "run") {
+                    out += `Input: ${response.data.data[i]["input"]}\n`
+                    out += `Output : ${response.data.data[i]["output"]}\n`
+                    out += `Expected : ${response.data.data[i]["expected"]}\n`
+                }
+                out += `\n`
+            }
+            
+            setOutput(out)
+        }
     }
 
     return (
@@ -73,7 +83,7 @@ export default function CodeEditor() {
             <div className="flex justify-between items-center p-2 bg-gray-800">
                 <Select 
                     value={language} 
-                    onValueChange={(value) => handleLanguageChange(value as keyof typeof codeTemplates)}
+                    onValueChange={(value) => handleLanguageChange(value as string)}
                 >
                     <SelectTrigger className="w-[180px] bg-gray-700 text-white">
                         <SelectValue placeholder="Select Language" />
@@ -90,14 +100,14 @@ export default function CodeEditor() {
                     <Button 
                         variant="outline" 
                         className="bg-green-600 text-white hover:bg-green-700"
-                        onClick={handleRun}
+                        onClick={() => handleExecute("run")}
                     >
                         Run
                     </Button>
                     <Button 
                         variant="default" 
                         className="bg-blue-600 text-white hover:bg-blue-700"
-                        onClick={handleSubmit}
+                        onClick={() => handleExecute("submit")}
                     >
                         Submit
                     </Button>
@@ -119,6 +129,12 @@ export default function CodeEditor() {
                     automaticLayout: true,
                 }}
             />
+
+            <ScrollArea className="h-full w-full p-4">
+                <pre className="text-white font-mono text-sm">
+                    {output}
+                </pre>
+            </ScrollArea>
         </div>
     )
 }
