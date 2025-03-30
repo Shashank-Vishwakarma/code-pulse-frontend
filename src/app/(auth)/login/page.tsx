@@ -54,7 +54,7 @@ export default function LoginPage() {
                     withCredentials: true,
                 }
             )
-            console.log(response.data)
+
             if (!response.data) {
                 toast.error(response.data?.message)
                 return

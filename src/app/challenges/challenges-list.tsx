@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Braces, Database, Code, Code2Icon } from "lucide-react"
 import { ChallengeData } from "@/states/apis/challengeApi"
+import Link from "next/link"
 
 function getTopicIcon(topic: string) {
     switch (topic) {
@@ -36,26 +37,28 @@ export default function ChallengesList({challenges}: {challenges: ChallengeData 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {challenges && challenges.data?.map((challenge) => (
-                <Card key={challenge.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-2">
-                        <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-                                {getTopicIcon(challenge.topic)}
-                                <span className="capitalize">{challenge.topic}</span>
+                <Link href={`/challenges/${challenge.id}`} key={challenge.id}>
+                    <Card key={challenge.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+                                    {getTopicIcon(challenge.topic)}
+                                    <span className="capitalize">{challenge.topic}</span>
+                                </div>
+                                <Badge className={`text-xs ${getDifficultyColor(challenge.difficulty)}`}>{challenge.difficulty}</Badge>
                             </div>
-                            <Badge className={`text-xs ${getDifficultyColor(challenge.difficulty)}`}>{challenge.difficulty}</Badge>
-                        </div>
-                        <h3 className="font-semibold line-clamp-2">{challenge.title}</h3>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                        <div className="flex items-center gap-2">
-                            <Avatar className="h-6 w-6">
-                                <AvatarFallback>{challenge.user_data.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm text-muted-foreground">{challenge.user_data.name}</span>
-                        </div>
-                    </CardContent>
-                </Card>
+                            <h3 className="font-semibold line-clamp-2">{challenge.title}</h3>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                            <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                    <AvatarFallback>{challenge.user_data.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm text-muted-foreground">{challenge.user_data.name}</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
             ))}
         </div>
     )

@@ -73,7 +73,6 @@ export default function CreateProblemPage() {
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values);
         // try {
         //     const response = await axios.post(
         //         "http://localhost:8000/api/v1/questions/create",

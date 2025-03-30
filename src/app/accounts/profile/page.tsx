@@ -29,7 +29,6 @@ export default function ProfilePage() {
     const router = useRouter()
 
     useEffect(()=>{
-        console.log("activeTab: ", activeTab)
         const fetchData = async () => {
             setData(null)
             setError(null)
@@ -49,7 +48,6 @@ export default function ProfilePage() {
                 if(activeTab === 'blogs'){
                     setData(response.data as BlogData)
                 }
-                console.log(response.data)
                 setError(null)
             } catch (error) {
                 console.error('Error fetching data:', error);

@@ -1,20 +1,25 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
+interface Userdata {
+    name: string,
+    email: string
+    username: string
+}
+
+interface QuestionData {
+    question: string,
+    options: string[],
+}
+
 interface Challenge {
     id: string,
     title: string,
     topic: string,
     difficulty: string,
     user_id: string,
-    user_data: {
-        name: string,
-        email: string
-        username: string
-    },
-    data: {
-        question: string,
-        options: string[],
-    },
+    user_data: Userdata,
+    data: QuestionData[],
+    score: string
     created_at: string
 }
 
