@@ -1,5 +1,6 @@
 "use client"
 
+import Header from '@/components/shared/header/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -43,25 +44,29 @@ export default function ChallengePage() {
     if(isSubmitted) {
         return (
             <div className="container max-w-4xl mx-auto py-10 px-4">
-                <Card className="w-full">
+                <div className="p-4">
+                    <Header />
+                </div>
+
+                <Card className="w-full my-4">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl">Challenge Results</CardTitle>
                         <CardDescription>
                             You scored {score.toFixed(0)}% ({Math.round(score / 10)} out of 10 questions correct)
                         </CardDescription>
                     </CardHeader>
-                <CardFooter className="flex flex-col items-center justify-center py-10">
-                    <Link href="/challenges">
-                        <Button
-                            className="w-full"
-                            onClick={() => {
-                                router.push("/challenges");
-                            }}
-                        >
-                            Go back to Challenges
-                        </Button>
-                    </Link>
-                </CardFooter>
+                    <CardFooter className="flex flex-col items-center justify-center py-10">
+                        <Link href="/challenges">
+                            <Button
+                                className="w-full"
+                                onClick={() => {
+                                    router.push("/challenges");
+                                }}
+                            >
+                                Go back to Challenges
+                            </Button>
+                        </Link>
+                    </CardFooter>
                 </Card>
             </div>
         )
@@ -130,7 +135,24 @@ export default function ChallengePage() {
 
     return (
         <div className="container max-w-4xl mx-auto py-10 px-4">
-            <Card className="w-full">
+            <div className="p-4">
+                <Header />
+            </div>
+
+            <div className='my-2'>
+                <Link href="/challenges">
+                    <Button
+                        className="w-full"
+                        onClick={() => {
+                            router.push("/challenges");
+                        }}
+                    >
+                        Go back to Challenges
+                    </Button>
+                </Link>
+            </div>
+
+            <Card className="w-full my-4">
                 <CardHeader>
                     <CardTitle className="text-2xl md:text-3xl">Challenge Quiz</CardTitle>
                     <CardDescription>Answer all 10 questions to complete the challenge</CardDescription>
