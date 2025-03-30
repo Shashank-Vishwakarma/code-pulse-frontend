@@ -148,7 +148,8 @@ export default function ProfilePage() {
                                             <p className='px-6 py-4 whitespace-nowrap'>Loading...</p>
                                         )}
 
-                                        {!isLoading && activeTab === 'questions' && data?.data.length !== undefined && data?.data.length > 0 && (data?.data as Question[]).map((item: Question) => (
+                                        {/* Questions submitted */}
+                                        {!isLoading && activeTab === 'questions' && data?.data?.length !== undefined && data?.data?.length > 0 && (data?.data as Question[]).map((item: Question) => (
                                             <div className=''>
                                                 <Button className='p-2 mb-4' onClick={()=> router.push(`/problems/create`)}>
                                                     Submit a Question
@@ -165,7 +166,8 @@ export default function ProfilePage() {
                                             </div>
                                         ))}
 
-                                        {!isLoading && activeTab === 'blogs' && data?.data.length !== undefined && data?.data.length > 0 && (data?.data as Blog[]).map((item: Blog) => (
+                                        {/* Blogs published */}
+                                        {!isLoading && activeTab === 'blogs' && data?.data?.length !== undefined && data?.data?.length > 0 && (data?.data as Blog[]).map((item: Blog) => (
                                             <div key={item.id} className='bg-green-100 rounded-lg font-medium py-4 px-2 flex flex-row items-center justify-between'>
                                                 <Link href={`/blogs/${item.slug}`} className='cursor-pointer flex flex-row items-center gap-2'>
                                                     <Image src={item.imageUrl} alt={item.title} width={200} height={200} className='object-cover' />
@@ -177,6 +179,8 @@ export default function ProfilePage() {
                                                 </div>
                                             </div>
                                         ))}
+
+                                        {/* Challenges Taken */}
 
                                         {!isLoading && !data && (
                                             <p className="px-6 py-4whitespace-nowrap">No data found</p>

@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useGetChallengeByIdQuery } from '@/states/apis/challengeApi';
+import axios from 'axios';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation'
-import { parse } from 'path';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 interface SelectedAnswer {
     question: string
@@ -28,18 +29,45 @@ export default function ChallengePage() {
     const router = useRouter()
 
     const handleSubmit = async ()=>{
+        if(Object.keys(selectedAnswers).length < 10){
+            toast.error("Please answer all questions")
+            return
+        }
 
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v1/challenges/${params.slug}/submit`, 
+                { answers: selectedAnswers }, 
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                }
+            )
+            if(!response.data){
+                toast.error(response.data?.message)
+                return
+            }
+
+            setScore(parseInt(response.data?.score?.split("/")[0], 10))
+            setIsSubmitted(true)
+        } catch(err) {
+            console.log("Error in submitting challenge: ", err)
+            toast.error("Could not submit challenge")
+        }
     }
 
     useEffect(()=>{
         if(!challenge){
             return
         }
+
         if (challenge.data.score !== "") {
+            setScore(parseInt(challenge.data.score?.split("/")[0], 10))
             setIsSubmitted(true)
-            setScore(parseFloat(challenge.data.score?.split("/")[0]))
         }
-    }, [])
+    }, [challenge])
 
     if(isSubmitted) {
         return (
@@ -51,8 +79,8 @@ export default function ChallengePage() {
                 <Card className="w-full my-4">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl">Challenge Results</CardTitle>
-                        <CardDescription>
-                            You scored {score.toFixed(0)}% ({Math.round(score / 10)} out of 10 questions correct)
+                        <CardDescription className='font-medium text-xl my-2'>
+                            Your score: {score.toFixed(0)} / 10
                         </CardDescription>
                     </CardHeader>
                     <CardFooter className="flex flex-col items-center justify-center py-10">
