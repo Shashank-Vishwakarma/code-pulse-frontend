@@ -6,9 +6,20 @@ interface Userdata {
     username: string
 }
 
+interface UserSelectedAnswer {
+    question: string,
+    answer: string
+}
+
 interface QuestionData {
     question: string,
     options: string[],
+}
+
+interface QuestionDataWithCorrectAnswers {
+    question: string,
+    options: string[],
+    correct_answer: string
 }
 
 interface Challenge {
@@ -19,7 +30,21 @@ interface Challenge {
     user_id: string,
     user_data: Userdata,
     data: QuestionData[],
-    score: string
+    score: string,
+    user_selected_answers: UserSelectedAnswer[],
+    created_at: string
+}
+
+interface ChallengeWithCorrectAnswers {
+    id: string,
+    title: string,
+    topic: string,
+    difficulty: string,
+    user_id: string,
+    user_data: Userdata,
+    data: QuestionDataWithCorrectAnswers[],
+    score: string,
+    user_selected_answers: UserSelectedAnswer[],
     created_at: string
 }
 
@@ -33,13 +58,18 @@ export interface SingleChallengeData {
     data: Challenge
 }
 
+export interface SingleChallengeDataWithCorrectAnswers {
+    message: string
+    data: ChallengeWithCorrectAnswers
+}
+
 export const challengeApi = createApi({
     reducerPath: 'challengeApi',
     baseQuery: fetchBaseQuery({
         baseUrl: 'http://localhost:8000/api/v1/challenges',
         credentials: 'include',
     }), 
-    tagTypes: ['Challenges', 'Challenge', 'ChallengesByUser'],
+    tagTypes: ['Challenges', 'Challenge', 'ChallengesByUser', 'CorrectAnswers'],
     endpoints: (builder) => ({
         getChallenges: builder.query<ChallengeData, void>({
             query: () => "/all",
@@ -52,6 +82,10 @@ export const challengeApi = createApi({
         getChallengeByUserId: builder.query<ChallengeData, string>({
             query: (userId: string) => `/user/${userId}`,
             providesTags: ['ChallengesByUser']
+        }),
+        getCorrectAnswersForChallenge: builder.query<SingleChallengeDataWithCorrectAnswers, string>({
+            query: (id: string) => `/${id}/answers`,
+            providesTags: ['CorrectAnswers']
         }),
         createChallenge: builder.mutation({
             query: (data: FormData) => ({
@@ -71,4 +105,4 @@ export const challengeApi = createApi({
     })
 })
 
-export const {useGetChallengesQuery, useGetChallengeByIdQuery, useGetChallengeByUserIdQuery, useCreateChallengeMutation, useDeleteChallengeMutation} = challengeApi
+export const {useGetChallengesQuery, useGetChallengeByIdQuery, useGetChallengeByUserIdQuery, useGetCorrectAnswersForChallengeQuery, useCreateChallengeMutation, useDeleteChallengeMutation} = challengeApi

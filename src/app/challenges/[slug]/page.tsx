@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useAppSelector } from '@/hooks/redux';
 import { useGetChallengeByIdQuery } from '@/states/apis/challengeApi';
 import axios from 'axios';
 import Link from 'next/link';
@@ -25,6 +26,8 @@ export default function ChallengePage() {
     const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([])
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [score, setScore] = useState(0)
+
+    const user = useAppSelector(state => state.authSlice.user)
 
     const router = useRouter()
 
@@ -52,6 +55,7 @@ export default function ChallengePage() {
 
             setScore(parseInt(response.data?.score?.split("/")[0], 10))
             setIsSubmitted(true)
+            toast.message("Challenge submitted successfully. Please go to your profile to see the result.")
         } catch(err) {
             console.log("Error in submitting challenge: ", err)
             toast.error("Could not submit challenge")
@@ -69,93 +73,32 @@ export default function ChallengePage() {
         }
     }, [challenge])
 
-    if(isSubmitted) {
-        return (
-            <div className="container max-w-4xl mx-auto py-10 px-4">
-                <div className="p-4">
-                    <Header />
-                </div>
-
-                <Card className="w-full my-4">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-3xl">Challenge Results</CardTitle>
-                        <CardDescription className='font-medium text-xl my-2'>
-                            Your score: {score.toFixed(0)} / 10
-                        </CardDescription>
-                    </CardHeader>
-                    <CardFooter className="flex flex-col items-center justify-center py-10">
-                        <Link href="/challenges">
-                            <Button
-                                className="w-full"
-                                onClick={() => {
-                                    router.push("/challenges");
-                                }}
-                            >
-                                Go back to Challenges
-                            </Button>
-                        </Link>
-                    </CardFooter>
-                </Card>
-            </div>
-        )
-    }
-
-    // if (isSubmitted) {
+    // if(isSubmitted){ {
     //     return (
     //         <div className="container max-w-4xl mx-auto py-10 px-4">
-    //             <Card className="w-full">
+    //             <div className="p-4">
+    //                 <Header />
+    //             </div>
+
+    //             <Card className="w-full my-4">
     //                 <CardHeader className="text-center">
     //                     <CardTitle className="text-3xl">Challenge Results</CardTitle>
-    //                     <CardDescription>
-    //                         You scored {score.toFixed(0)}% ({Math.round(score / 10)} out of 10 questions correct)
+    //                     <CardDescription className='font-medium text-xl my-2'>
+    //                         Your score: {score.toFixed(0)} / 10
     //                     </CardDescription>
     //                 </CardHeader>
-    //             <CardContent className="flex flex-col items-center justify-center py-10">
-    //                 <div className="w-full max-w-md">
-    //                     <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary">
-    //                         <div
-    //                             className="h-full bg-primary transition-all duration-500 ease-in-out"
-    //                             style={{ width: `${score}%` }}
-    //                         />
-    //                     </div>
-    //                     <div className="mt-8 space-y-4">
-    //                         {challenge?.data.data?.map((q, index) => (
-    //                         <div key={index} className="rounded-lg border p-4">
-    //                             <p className="font-medium">{q.question}</p>
-    //                             <div className="mt-2 flex items-center justify-between">
-    //                                 <p>
-    //                                     Your answer:{" "}
-    //                                     <span
-    //                                         className={
-    //                                             selectedAnswers[index].answer === q.correctAnswer
-    //                                             ? "text-green-600 font-medium"
-    //                                             : "text-red-600 font-medium"
-    //                                         }
-    //                                     >
-    //                                     {selectedAnswers[index].answer}
-    //                                     </span>
-    //                                 </p>
-    //                                 {selectedAnswers[index].answer !== q.correctAnswer && (
-    //                                     <p className="text-green-600 font-medium">Correct: {q.correctAnswer}</p>
-    //                                 )}
-    //                             </div>
-    //                         </div>
-    //                         ))}
-    //                     </div>
-    //                 </div>
-    //             </CardContent>
-    //             <CardFooter>
-    //                 <Link href="/challenges">
-    //                     <Button
-    //                     className="w-full"
-    //                     onClick={() => {
-    //                         router.push("/challenges");
-    //                     }}
-    //                     >
-    //                         Go back to Challenges
-    //                     </Button>
-    //                 </Link>
-    //             </CardFooter>
+    //                 <CardFooter className="flex flex-col items-center justify-center py-10">
+    //                     <Link href="/challenges">
+    //                         <Button
+    //                             className="w-full"
+    //                             onClick={() => {
+    //                                 router.push("/challenges");
+    //                             }}
+    //                         >
+    //                             Go back to Challenges
+    //                         </Button>
+    //                     </Link>
+    //                 </CardFooter>
     //             </Card>
     //         </div>
     //     )

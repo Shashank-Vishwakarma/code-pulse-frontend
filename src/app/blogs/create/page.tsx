@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
+import Header from '@/components/shared/header/Header';
 
 export default function CreateBlogPage() {
     const [title, setTitle] = React.useState('');
@@ -41,6 +42,10 @@ export default function CreateBlogPage() {
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col px-4 py-12'>
+            <div className='p-4'>
+                <Header />
+            </div>
+            
             <h1 className='text-4xl font-bold text-green-500 text-center'>Create Blog Post</h1>
             <div className='flex flex-row gap-4 mt-4'>
                 <Input
@@ -59,7 +64,7 @@ export default function CreateBlogPage() {
             <div className='mt-4'>
                 <MDEditor
                     value={description}
-                    onChange={setDescription}
+                    onChange={(value) => setDescription(value || '')}
                     className='bg-gray-800 text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900'
                     height={500}
                 />
