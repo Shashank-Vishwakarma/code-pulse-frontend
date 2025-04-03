@@ -79,8 +79,8 @@ export const challengeApi = createApi({
             query: (id: string) => `/${id}`,
             providesTags: ['Challenge']
         }),
-        getChallengeByUserId: builder.query<ChallengeData, string>({
-            query: (userId: string) => `/user/${userId}`,
+        getChallengesofUser: builder.query<ChallengeData, void>({
+            query: () => "/user",
             providesTags: ['ChallengesByUser']
         }),
         getCorrectAnswersForChallenge: builder.query<SingleChallengeDataWithCorrectAnswers, string>({
@@ -105,4 +105,4 @@ export const challengeApi = createApi({
     })
 })
 
-export const {useGetChallengesQuery, useGetChallengeByIdQuery, useGetChallengeByUserIdQuery, useGetCorrectAnswersForChallengeQuery, useCreateChallengeMutation, useDeleteChallengeMutation} = challengeApi
+export const {useGetChallengesQuery, useGetChallengeByIdQuery, useGetChallengesofUserQuery, useGetCorrectAnswersForChallengeQuery, useCreateChallengeMutation, useDeleteChallengeMutation} = challengeApi

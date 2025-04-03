@@ -6,12 +6,12 @@ import ChallengesList from "./challenges-list"
 import { Skeleton } from "@/components/ui/skeleton"
 import Header from "@/components/shared/header/Header"
 import { useAppSelector } from "@/hooks/redux"
-import { useGetChallengeByUserIdQuery, useGetChallengesQuery } from "@/states/apis/challengeApi"
+import { useGetChallengesofUserQuery, useGetChallengesQuery } from "@/states/apis/challengeApi"
 
 export default function ChallengesPage() {
     const user = useAppSelector((state: any) => state.authSlice.user)
 
-    const {data: challengesDataOfUser} = useGetChallengeByUserIdQuery(user?.id as string, { skip: !user })
+    const {data: challengesDataOfUser} = useGetChallengesofUserQuery()
     const {data: allChallengesExceptofCurrentUser} = useGetChallengesQuery()
 
     return (

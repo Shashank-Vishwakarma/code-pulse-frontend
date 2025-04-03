@@ -6,12 +6,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAppSelector } from '@/hooks/redux';
 import { useGetChallengeByIdQuery } from '@/states/apis/challengeApi';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner';
 
 interface SelectedAnswer {
@@ -24,10 +23,6 @@ export default function ChallengePage() {
     const {data: challenge} = useGetChallengeByIdQuery(params.slug as string)
 
     const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([])
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const [score, setScore] = useState(0)
-
-    const user = useAppSelector(state => state.authSlice.user)
 
     const router = useRouter()
 
@@ -47,62 +42,18 @@ export default function ChallengePage() {
                     },
                     withCredentials: true,
                 }
-            )
+            );
             if(!response.data){
                 toast.error(response.data?.message)
                 return
             }
 
-            setScore(parseInt(response.data?.score?.split("/")[0], 10))
-            setIsSubmitted(true)
-            toast.message("Challenge submitted successfully. Please go to your profile to see the result.")
+            toast.message(response.data?.message)
         } catch(err) {
             console.log("Error in submitting challenge: ", err)
             toast.error("Could not submit challenge")
         }
     }
-
-    useEffect(()=>{
-        if(!challenge){
-            return
-        }
-
-        if (challenge.data.score !== "") {
-            setScore(parseInt(challenge.data.score?.split("/")[0], 10))
-            setIsSubmitted(true)
-        }
-    }, [challenge])
-
-    // if(isSubmitted){ {
-    //     return (
-    //         <div className="container max-w-4xl mx-auto py-10 px-4">
-    //             <div className="p-4">
-    //                 <Header />
-    //             </div>
-
-    //             <Card className="w-full my-4">
-    //                 <CardHeader className="text-center">
-    //                     <CardTitle className="text-3xl">Challenge Results</CardTitle>
-    //                     <CardDescription className='font-medium text-xl my-2'>
-    //                         Your score: {score.toFixed(0)} / 10
-    //                     </CardDescription>
-    //                 </CardHeader>
-    //                 <CardFooter className="flex flex-col items-center justify-center py-10">
-    //                     <Link href="/challenges">
-    //                         <Button
-    //                             className="w-full"
-    //                             onClick={() => {
-    //                                 router.push("/challenges");
-    //                             }}
-    //                         >
-    //                             Go back to Challenges
-    //                         </Button>
-    //                     </Link>
-    //                 </CardFooter>
-    //             </Card>
-    //         </div>
-    //     )
-    // }
 
     return (
         <div className="container max-w-4xl mx-auto py-10 px-4">
