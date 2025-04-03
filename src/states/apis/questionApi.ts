@@ -50,6 +50,14 @@ export const questionApi = createApi({
             query: (id) => `/${id}`,
             providesTags: ['Question']
         }),
+        createQuestion: builder.mutation({
+            query: (data: FormData) => ({
+                url: '/create',
+                body: data,
+                method: 'POST'
+            }),
+            invalidatesTags: ['Questions']
+        }),
         updateQuestion: builder.mutation({
             query: ({id, data}) => ({
                 url: `/${id}`,
@@ -68,4 +76,4 @@ export const questionApi = createApi({
     })
 })
 
-export const { useGetQuestionsQuery, useGetQuestionByIdQuery, useUpdateQuestionMutation, useDeleteQuestionMutation } = questionApi
+export const { useGetQuestionsQuery, useGetQuestionByIdQuery, useCreateQuestionMutation, useUpdateQuestionMutation, useDeleteQuestionMutation } = questionApi
