@@ -79,7 +79,7 @@ export default function Home() {
                         Join thousands of developers who are transforming their coding interview preparation.
                     </p>
                     {
-                        user?.username === "" && (
+                        !user?.username && (
                             <Link 
                                 href="/signup" 
                                 className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105"
