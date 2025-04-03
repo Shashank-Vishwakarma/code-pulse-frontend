@@ -205,7 +205,7 @@ export default function ProfilePage() {
                                         You have not created any questions
                                     </p>
                                 ) : (
-                                    questionsCreated.map((question) => (
+                                    questionsCreated?.map((question) => (
                                         <QuestionsCreatedCard key={question.id} id={question.id} title={question.title} createdAt={question.createdAt} difficulty={question.difficulty} />
                                     ))
                                 )
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                                         You have not created any blogs
                                     </p>
                                 ) : (
-                                    blogsCreated.map((blog) => (
+                                    blogsCreated?.map((blog) => (
                                         <BlogCard key={blog.id} id={blog.id} title={blog.title} createdAt={blog.createdAt} />
                                     ))
                                 )
@@ -237,7 +237,7 @@ export default function ProfilePage() {
                                         You have not created any challenges
                                     </p>
                                 ) : (
-                                    challengesCreated.map((challenge) => (
+                                    challengesCreated?.map((challenge) => (
                                         <ChallengeCreatedCard key={challenge.id} id={challenge.id} topic={challenge.topic} difficulty={challenge.difficulty} title={challenge.title} created_at={challenge.created_at} />
                                     ))
                                 )
@@ -253,7 +253,7 @@ export default function ProfilePage() {
                                         You have not attempted any challenge
                                     </p>
                                 ) : (
-                                    challengesTaken.map((challenge) => (
+                                    challengesTaken?.map((challenge) => (
                                         <ChallengeTakenCard key={challenge.id} id={challenge.id} title={challenge.title} topic={challenge.topic} difficulty={challenge.difficulty} score={challenge.score} createdAt={challenge.createdAt} />
                                     ))
                                 )

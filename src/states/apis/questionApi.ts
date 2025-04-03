@@ -1,4 +1,6 @@
+import { formSchema } from '@/app/problems/create/page'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { z } from 'zod'
 
 export interface TestCase {
     input: string
@@ -51,7 +53,7 @@ export const questionApi = createApi({
             providesTags: ['Question']
         }),
         createQuestion: builder.mutation({
-            query: (data: FormData) => ({
+            query: (data: z.infer<typeof formSchema>) => ({
                 url: '/create',
                 body: data,
                 method: 'POST'
