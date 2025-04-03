@@ -1,220 +1,18 @@
 'use client';
 
-// import React, { useEffect, useState } from 'react';
-// import Header from '@/components/shared/header/Header';
-// import axios from 'axios';
-// import { Blog, BlogData } from '@/states/apis/blogApi';
-// import { Question, QuestionsData } from '@/states/apis/questionApi';
-// import Image from 'next/image';
-// import Link from 'next/link';
-// import { Pen, Trash2 } from 'lucide-react';
-// import { toast } from 'sonner';
-// import { Button } from '@/components/ui/button';
-// import { useRouter } from 'next/navigation';
-
-// interface NavItem {
-//     title: string;
-// }
-
-// const navItems: NavItem[] = [
-//     { title: 'Questions'},
-//     { title: 'Blogs'},
-// ];
-
-// export default function ProfilePage() {
-//     const [activeTab, setActiveTab] = useState<string>('questions');
-//     const [data, setData] = useState<BlogData | QuestionsData | null>(null);
-//     const [error, setError] = useState<string | null>(null);
-//     const [isLoading, setIsLoading] = useState<boolean>(false);
-//     const router = useRouter()
-
-//     useEffect(()=>{
-//         const fetchData = async () => {
-//             setData(null)
-//             setError(null)
-//             setIsLoading(true)
-//             try {
-//                 const response = await axios.get(`http://localhost:8000/api/v1/${activeTab}/user`, {
-//                     withCredentials: true,
-//                 })
-//                 if (!response.data) {
-//                     setError(response.data?.message)
-//                     setData(null)
-//                     return
-//                 }
-//                 if(activeTab === 'questions'){
-//                     setData(response.data as QuestionsData)
-//                 }
-//                 if(activeTab === 'blogs'){
-//                     setData(response.data as BlogData)
-//                 }
-//                 setError(null)
-//             } catch (error) {
-//                 console.error('Error fetching data:', error);
-//                 setData(null)
-//                 setError('Something went wrong')
-//             } finally {
-//                 setIsLoading(false)
-//             }
-//         }
-
-//         fetchData()
-//     }, [activeTab])
-
-//     const handleQuestionDelete = async (id: string) => {
-//         try {
-//             const response = await axios.delete(`http://localhost:8000/api/v1/questions/${id}`, {
-//                 withCredentials: true,
-//             })
-//             if (!response.data) {
-//                 return
-//             }
-//             toast.success(response.data?.message)
-//         } catch (error) {
-//             console.error('Error deleting data:', error);
-//         }
-//     }
-
-//     const handleBlogDelete = async (id: string) => {
-//         try {
-//             const response = await axios.delete(`http://localhost:8000/api/v1/blogs/${id}`, {
-//                 withCredentials: true,
-//             })
-//             if (!response.data) {
-//                 return
-//             }
-//             toast.success(response.data?.message)
-//         } catch (error) {
-//             console.error('Error deleting data:', error);
-//         }
-//     }
-
-//     const handleQuestionEdit = async (id: string) => {
-//         try {
-//             const response = await axios.put(`http://localhost:8000/api/v1/questions/${id}`, {
-//                 withCredentials: true,
-//             })
-//             if (!response.data) {
-//                 return
-//             }
-//         } catch (error) {
-//             console.error('Error deleting data:', error);
-//         }
-//     }
-
-//     const handleBlogEdit = async (id: string) => {
-//         try {
-//             const response = await axios.put(`http://localhost:8000/api/v1/blogs/${id}`, {
-//                 withCredentials: true,
-//             })
-//             if (!response.data) {
-//                 return
-//             }
-//         } catch (error) {
-//             console.error('Error deleting data:', error);
-//         }
-//     }
-
-//     return (
-//         <div className="min-h-screen bg-gradient-to-br from-gray-600 to-blue-900">
-//             <Header />
-//             <div className="container mx-auto px-4 py-24 h-full">
-//                 <div className="flex flex-col md:flex-row gap-6">
-//                     {/* Sidebar */}
-//                     <div className="w-full h-full md:w-64 bg-white rounded-lg shadow-sm">
-//                         <nav className="p-4">
-//                             <h2 className="text-xl font-semibold text-gray-800 mb-4">Profile Menu</h2>
-//                             <ul className="space-y-2">
-//                                 {navItems.map((item) => (
-//                                     <li 
-//                                         key={item.title} 
-//                                         onClick={() => setActiveTab(item.title.toLowerCase())} 
-//                                         className={`block px-4 py-2 cursor-pointer rounded-md transition-colors ${activeTab === item.title.toLowerCase() ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
-//                                     >
-//                                         {item.title}
-//                                     </li>
-//                                 ))}
-//                             </ul>
-//                         </nav>
-//                     </div>
-
-//                     {/* Main Content */}
-//                     <div className="flex-1 bg-white rounded-lg shadow-sm p-6">
-//                         <div className="prose max-w-none">
-//                             {
-//                                 error != null ? <p>{error}</p> : (
-//                                     <div>
-//                                         {isLoading && (
-//                                             <p className='px-6 py-4 whitespace-nowrap'>Loading...</p>
-//                                         )}
-
-//                                         {/* Questions submitted */}
-//                                         {!isLoading && activeTab === 'questions' && data?.data?.length !== undefined && data?.data?.length > 0 && (data?.data as Question[]).map((item: Question) => (
-//                                             <div className=''>
-//                                                 <Button className='p-2 mb-4' onClick={()=> router.push(`/problems/create`)}>
-//                                                     Submit a Question
-//                                                 </Button>
-//                                                 <div key={item.id} className='bg-green-100 rounded-lg font-medium py-4 px-2 flex flex-row items-center justify-between'>
-//                                                     <Link href={`/problems/${item.slug}`}>
-//                                                         <p className="cursor-pointer">{item.title}</p>
-//                                                     </Link>
-//                                                     <div className='flex flex-row items-center gap-2'>
-//                                                         <Pen className='cursor-pointer' onClick={() => handleQuestionEdit(item.id)} />
-//                                                         <Trash2 className='cursor-pointer' onClick={() => handleQuestionDelete(item.id)}/>
-//                                                     </div>
-//                                                 </div>
-//                                             </div>
-//                                         ))}
-
-//                                         {/* Blogs published */}
-//                                         {!isLoading && activeTab === 'blogs' && data?.data?.length !== undefined && data?.data?.length > 0 && (data?.data as Blog[]).map((item: Blog) => (
-//                                             <div key={item.id} className='bg-green-100 rounded-lg font-medium py-4 px-2 flex flex-row items-center justify-between'>
-//                                                 <Link href={`/blogs/${item.slug}`} className='cursor-pointer flex flex-row items-center gap-2'>
-//                                                     <Image src={item.imageUrl} alt={item.title} width={200} height={200} className='object-cover' />
-//                                                     <p className="px-6 py-4 whitespace-nowrap  rounded-lg cursor-pointer font-medium">{item.title}</p>
-//                                                 </Link>
-//                                                 <div className='flex flex-row items-center gap-2'>
-//                                                     <Pen className='cursor-pointer' onClick={() => handleBlogEdit(item.id)} />
-//                                                     <Trash2 className='cursor-pointer' onClick={() => handleBlogDelete(item.id)}/>
-//                                                 </div>
-//                                             </div>
-//                                         ))}
-
-//                                         {/* Challenges Taken */}
-
-//                                         {!isLoading && !data && (
-//                                             <p className="px-6 py-4whitespace-nowrap">No data found</p>
-//                                         )}
-//                                     </div>
-//                                 )
-//                             }
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-
-// import type { Metadata } from "next"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, CalendarDays, Code, FileText, Trophy, User } from "lucide-react"
-import { SingleBlog } from "@/states/apis/blogApi"
-import { SingleQuestion } from "@/states/apis/questionApi"
-import { SingleChallengeData } from "@/states/apis/challengeApi"
-import { useAppSelector } from "@/hooks/redux";
+import { CalendarDays, Code, FileText, Trophy, User } from "lucide-react"
 import Header from "@/components/shared/header/Header";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-// export const metadata: Metadata = {
-//     title: "Profile",
-//     description: "User profile page",
-// }
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
+import { useAppSelector } from "@/hooks/redux";
+import { formatDate } from "@/utils/profile";
 
 interface StatsCardProps {
     title: string
@@ -222,16 +20,21 @@ interface StatsCardProps {
     icon: React.ReactNode
 }
 
+// Blogs created interfaces
 interface BlogProps {
+    id: string
     title: string
     createdAt: string
 }
 
+// Questions Submitted Interfaces
 interface QuestionsSubmittedProps {
     id: string
     title: string
+    difficulty: string
 }
 
+// Questions Created Interfaces
 interface QuestionsCreatedProps {
     id: string
     title: string
@@ -240,58 +43,89 @@ interface QuestionsCreatedProps {
 }
 
 interface ChallengesCreatedProps {
+    id: string
     title: string
-    createdAt: string
+    topic: string
+    difficulty: string
+    created_at: string
 }
 
+// Challenges Taken Interfaces
 interface ChallengesTakenProps {
     id: string
     title: string
+    topic: string
+    difficulty: string
     score: string
     createdAt: string
 }
 
-// Mock data - replace with actual data fetching
-const mockUser = {
-    id: "1",
-    name: "Jane Cooper",
-    username: "jane23",
-    email: "jane.cooper@example.com",
-    image: "/placeholder.svg?height=100&width=100",
-    joinedDate: "January 2023",
-    role: "Developer",
-    stats: {
-        blogs: 12,
-        questions: 24,
-        challengesCreated: 5,
-        challengesTaken: 18,
-    },
-}
-
-const mockBlogs = [
-    { id: "1", title: "Understanding Big O Notation", date: "2023-10-15", likes: 42, comments: 8 },
-    { id: "2", title: "Mastering React Hooks", date: "2023-09-22", likes: 37, comments: 12 },
-    { id: "3", title: "Efficient Algorithms for Sorting", date: "2023-08-10", likes: 29, comments: 5 },
-]
-
-const mockQuestions = [
-    { id: "1", title: "Two Sum Problem", difficulty: "Easy", date: "2023-10-10", solved: 156 },
-    { id: "2", title: "Merge K Sorted Lists", difficulty: "Hard", date: "2023-09-05", solved: 78 },
-    { id: "3", title: "Valid Parentheses", difficulty: "Medium", date: "2023-08-20", solved: 210 },
-]
-
-const mockChallengesCreated = [
-    { id: "1", title: "30 Days of JavaScript", participants: 245, date: "2023-10-01" },
-    { id: "2", title: "Database Design Challenge", participants: 112, date: "2023-08-15" },
-]
-
-const mockChallengesTaken = [
-    { id: "1", title: "Algorithms Bootcamp", completion: 100, date: "2023-09-30", score: "3/10" },
-    { id: "2", title: "Frontend Masters", completion: 75, date: "2023-10-15" , score: "4/10"},
-    { id: "3", title: "System Design Interview Prep", completion: 50, date: "2023-10-20" , score: "8/10"},
-]
-
 export default function ProfilePage() {
+    const [activeTab, setActiveTab] = useState("questions-submitted");
+
+    const [questionsSubmitted, setQuestionsSubmitted] = useState<QuestionsSubmittedProps[]>([]);
+    const [questionsCreated, setQuestionsCreated] = useState<QuestionsCreatedProps[]>([]);
+    const [blogsCreated, setBlogsCreated] = useState<BlogProps[]>([]);
+    const [challengesCreated, setChallengesCreated] = useState<ChallengesCreatedProps[]>([]);
+    const [challengesTaken, setChallengesTaken] = useState<ChallengesTakenProps[]>([]);
+
+    const user = useAppSelector(state => state.authSlice.user);
+
+    useEffect(()=>{
+        let url = ""
+        switch(activeTab) {
+            case "questions-submitted":
+                url = "http://localhost:8000/api/v1/questions/submitted"
+                break;
+            case "questions-created":
+                url = "http://localhost:8000/api/v1/questions/user"
+                break;
+            case "blogs-created":
+                url = "http://localhost:8000/api/v1/blogs/user"
+                break;
+            case "challenges-created":
+                url = "http://localhost:8000/api/v1/challenges/user"
+                break;
+            case "challenges-taken":
+                url = "http://localhost:8000/api/v1/challenges/taken"
+                break;
+        }
+
+        const fetchData = async () => {
+            try {
+                // skip network request if already fetched
+                if(activeTab === "questions-submitted" && questionsSubmitted.length > 0) return
+                if(activeTab === "questions-created" && questionsCreated.length > 0) return
+                if(activeTab === "blogs-created" && blogsCreated.length > 0) return
+                if(activeTab === "challenges-created" && challengesCreated.length > 0) return
+                if(activeTab === "challenges-taken" && challengesTaken.length > 0) return
+
+                const response = await axios.get(url, {withCredentials: true});
+
+                if(!response.data) {
+                    toast.error(response.data?.message)
+                    return
+                }
+
+                if (activeTab === "questions-submitted") {
+                    setQuestionsSubmitted(response.data.data as QuestionsSubmittedProps[])
+                } else if (activeTab === "questions-created") {
+                    setQuestionsCreated(response.data.data as QuestionsCreatedProps[])
+                } else if (activeTab === "blogs-created") {
+                    setBlogsCreated(response.data.data as BlogProps[])
+                } else if(activeTab === "challenges-created") {
+                    setChallengesCreated(response.data.data as ChallengesCreatedProps[])
+                } else if (activeTab === "challenges-taken") {
+                    setChallengesTaken(response.data.data as ChallengesTakenProps[])
+                }
+            } catch(error) {
+                console.log(error)
+            }
+        }
+
+        fetchData()
+    }, [activeTab])
+
     return (
         <div className="container mx-auto py-8 px-4">
             <div className="p-4">
@@ -302,21 +136,21 @@ export default function ProfilePage() {
                 {/* Profile Header */}
                 <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                     <Avatar className="w-24 h-24 border-4 border-background">
-                        <AvatarImage src={mockUser.image} alt={mockUser.name} />
                         <AvatarFallback>
                             <User className="h-12 w-12" />
+                            {user?.name}
                         </AvatarFallback>
                     </Avatar>
                     <div className="space-y-2">
                         <div className="space-y-1">
-                            <h1 className="text-2xl font-bold">{mockUser.name}</h1>
-                            <p className="text-muted-foreground">{mockUser.username}</p>
-                            <p className="text-muted-foreground">{mockUser.email}</p>
+                            <h1 className="text-2xl font-bold">{user?.name}</h1>
+                            <p className="text-muted-foreground">{user?.username}</p>
+                            <p className="text-muted-foreground">{user?.email}</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             <Badge variant="outline" className="flex items-center gap-1">
                                 <CalendarDays className="h-3 w-3" />
-                                Joined {mockUser.joinedDate}
+                                Joined on {formatDate(user?.created_at || "")}
                             </Badge>
                         </div>
                     </div>
@@ -324,32 +158,40 @@ export default function ProfilePage() {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <StatsCard title="Question Submissions" value={mockUser.stats.questions} icon={<Code className="h-4 w-4" />} />
-                    <StatsCard title="Questions Created" value={mockUser.stats.questions} icon={<Code className="h-4 w-4" />} />
-                    <StatsCard title="Blogs" value={mockUser.stats.blogs} icon={<FileText className="h-4 w-4" />} />
-                    <StatsCard title="Challenges Created" value={mockUser.stats.challengesCreated} icon={<Trophy className="h-4 w-4" />} />
-                    <StatsCard title="Challenges Taken" value={mockUser.stats.challengesTaken} icon={<Trophy className="h-4 w-4" />} />
+                    <StatsCard title="Question Submissions" value={user?.stats?.questions_submitted || "N/A"} icon={<Code className="h-4 w-4" />} />
+                    <StatsCard title="Questions Created" value={user?.stats?.questions_created || "N/A"} icon={<Code className="h-4 w-4" />} />
+                    <StatsCard title="Blogs" value={user?.stats?.blogs_created || "N/A"} icon={<FileText className="h-4 w-4" />} />
+                    <StatsCard title="Challenges Created" value={user?.stats?.challenges_created || "N/A"} icon={<Trophy className="h-4 w-4" />} />
+                    <StatsCard title="Challenges Taken" value={user?.stats?.challenges_taken || "N/A"} icon={<Trophy className="h-4 w-4" />} />
                 </div>
 
                 {/* Content Tabs */}
-                <Tabs defaultValue="questions-submitted" className="w-full">
+                <Tabs defaultValue="questions-submitted" className="w-full" onValueChange={(value) => setActiveTab(value)}>
                     <TabsList className="grid md:grid-cols-3 lg:grid-cols-5 w-full">
                         <TabsTrigger value="questions-submitted">Submissions</TabsTrigger>
-                        <TabsTrigger value="questions">Questions Created</TabsTrigger>
-                        <TabsTrigger value="blogs">Blogs</TabsTrigger>
+                        <TabsTrigger value="questions-created">Questions Created</TabsTrigger>
+                        <TabsTrigger value="blogs-created">Blogs</TabsTrigger>
                         <TabsTrigger value="challenges-created">Challenges Created</TabsTrigger>
                         <TabsTrigger value="challenges-taken">Challenges Taken</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="questions-submitted" className="mt-6">
                         <div className="grid gap-4">
-                            {mockQuestions.map((question) => (
-                                <QuestionsSubmittedCard key={question.id} id={question.id} title={question.title} />
-                            ))}
+                            {
+                                questionsSubmitted?.length === 0 ? (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not submitted any questions
+                                    </p>
+                                ) : (
+                                    questionsSubmitted?.map((question) => (
+                                        <QuestionsSubmittedCard key={question.id} id={question.id} title={question.title} difficulty={question.difficulty} />
+                                    ))
+                                )
+                            }
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="questions" className="mt-6">
+                    <TabsContent value="questions-created" className="mt-6">
                         <div className="grid gap-4">
                             <Link href={"/problems/create"} className="w-full">
                                 <Button className="w-full">
@@ -357,33 +199,65 @@ export default function ProfilePage() {
                                 </Button>
                             </Link>
 
-                            {mockQuestions.map((question) => (
-                                <QuestionsCreatedCard key={question.id} id={question.id} title={question.title} createdAt={question.date} difficulty={question.difficulty} />
-                            ))}
+                            {
+                                questionsCreated?.length === 0 ? (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any questions
+                                    </p>
+                                ) : (
+                                    questionsCreated.map((question) => (
+                                        <QuestionsCreatedCard key={question.id} id={question.id} title={question.title} createdAt={question.createdAt} difficulty={question.difficulty} />
+                                    ))
+                                )
+                            }
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="blogs" className="mt-6">
+                    <TabsContent value="blogs-created" className="mt-6">
                         <div className="grid gap-4">
-                            {mockBlogs.map((blog) => (
-                                <BlogCard key={blog.id} title={blog.title} createdAt={blog.date} />
-                            ))}
+                            {
+                                blogsCreated?.length === 0 ? (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any blogs
+                                    </p>
+                                ) : (
+                                    blogsCreated.map((blog) => (
+                                        <BlogCard key={blog.id} id={blog.id} title={blog.title} createdAt={blog.createdAt} />
+                                    ))
+                                )
+                            }
                         </div>
                     </TabsContent>
 
                     <TabsContent value="challenges-created" className="mt-6">
                         <div className="grid gap-4">
-                            {mockChallengesCreated.map((challenge) => (
-                                <ChallengeCreatedCard key={challenge.id} title={challenge.title} createdAt={challenge.date} />
-                            ))}
+                            {
+                                challengesCreated?.length === 0 ? (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any challenges
+                                    </p>
+                                ) : (
+                                    challengesCreated.map((challenge) => (
+                                        <ChallengeCreatedCard key={challenge.id} id={challenge.id} topic={challenge.topic} difficulty={challenge.difficulty} title={challenge.title} created_at={challenge.created_at} />
+                                    ))
+                                )
+                            }
                         </div>
                     </TabsContent>
 
                     <TabsContent value="challenges-taken" className="mt-6">
                         <div className="grid gap-4">
-                            {mockChallengesTaken.map((challenge) => (
-                                <ChallengeTakenCard key={challenge.id} id={challenge.id} title={challenge.title} score={challenge.score} createdAt={challenge.date} />
-                            ))}
+                            {
+                                challengesTaken?.length === 0 ? (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not attempted any challenge
+                                    </p>
+                                ) : (
+                                    challengesTaken.map((challenge) => (
+                                        <ChallengeTakenCard key={challenge.id} id={challenge.id} title={challenge.title} topic={challenge.topic} difficulty={challenge.difficulty} score={challenge.score} createdAt={challenge.createdAt} />
+                                    ))
+                                )
+                            }
                         </div>
                     </TabsContent>
                 </Tabs>
@@ -407,13 +281,37 @@ function StatsCard({ title, value, icon }: StatsCardProps) {
     )
 }
 
-function QuestionsSubmittedCard({id, title}: QuestionsSubmittedProps) {
+function QuestionsSubmittedCard({id, title, difficulty}: QuestionsSubmittedProps) {
+    const difficultyColor = {
+        Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+        Hard: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+    }
+
+    let difficultyCol = ""
+    switch(difficulty) {
+        case "Easy":
+            difficultyCol = difficultyColor.Easy
+            break;
+        case "Medium":
+            difficultyCol = difficultyColor.Medium
+            break;
+        case "Hard":
+            difficultyCol = difficultyColor.Hard
+            break;
+        default:
+            difficultyCol = difficultyColor.Easy
+    }
+
     return (
         <Link href={`/problems/${title}?id=${id}`}>
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-start">
                         <CardTitle className="text-lg">{title}</CardTitle>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
+                            {difficulty}
+                        </span>
                     </div>
                 </CardHeader>
             </Card>
@@ -433,10 +331,13 @@ function QuestionsCreatedCard({id, difficulty, title, createdAt}: QuestionsCreat
     switch(difficulty) {
         case "Easy":
             difficultyCol = difficultyColor.Easy
+            break;
         case "Medium":
             difficultyCol = difficultyColor.Medium
+            break;
         case "Hard":
             difficultyCol = difficultyColor.Hard
+            break;
         default:
             difficultyCol = difficultyColor.Easy
     }
@@ -473,24 +374,84 @@ function BlogCard({title, createdAt}: BlogProps) {
 }
 
 // Challenge Created Card Component
-function ChallengeCreatedCard({title, createdAt}: ChallengesCreatedProps) {
+function ChallengeCreatedCard({id, title, topic, difficulty, created_at}: ChallengesCreatedProps) {
+    const difficultyColor = {
+        Beginner: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        Intermediate: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+        Advanced: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+    }
+
+    let difficultyCol = ""
+    switch(difficulty) {
+        case "Beginner":
+            difficultyCol = difficultyColor.Beginner
+            break;
+        case "Intermediate":
+            difficultyCol = difficultyColor.Intermediate
+            break;
+        case "Advanced":
+            difficultyCol = difficultyColor.Advanced
+            break;
+        default:
+            difficultyCol = difficultyColor.Beginner
+    }
+
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-lg">{title}</CardTitle>
-                <CardDescription>Created on {new Date(createdAt).toLocaleDateString()}</CardDescription>
-            </CardHeader>
-        </Card>
+        <Link href={`/challenges/${id}`}>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">{title}</CardTitle>
+                    <div className="flex justify-between items-start">
+                        <span className="px-2 py-1 rounded-full text-xs font-medium">
+                            {topic}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
+                            {difficulty}
+                        </span>
+                    </div>
+                    <CardDescription>Created on {new Date(created_at).toLocaleDateString()}</CardDescription>
+                </CardHeader>
+            </Card>
+        </Link>
     )
 }
 
 // Challenge Taken Card Component
-function ChallengeTakenCard({id, title, score}: ChallengesTakenProps) {
+function ChallengeTakenCard({id, title, topic, difficulty, score}: ChallengesTakenProps) {
+    const difficultyColor = {
+        Beginner: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        Intermediate: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+        Advanced: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+    }
+
+    let difficultyCol = ""
+    switch(difficulty) {
+        case "Beginner":
+            difficultyCol = difficultyColor.Beginner
+            break;
+        case "Intermediate":
+            difficultyCol = difficultyColor.Intermediate
+            break;
+        case "Advanced":
+            difficultyCol = difficultyColor.Advanced
+            break;
+        default:
+            difficultyCol = difficultyColor.Beginner
+    }
+
     return (
         <Link href={`/challenges/${id}/result`}>
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">{title}</CardTitle>
+                    <div>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium">
+                            {topic}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
+                            {difficulty}
+                        </span>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-2">
