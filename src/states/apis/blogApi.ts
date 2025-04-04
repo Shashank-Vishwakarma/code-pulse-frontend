@@ -14,6 +14,7 @@ export interface Blog {
     body: string
     imageUrl: string
     slug: string
+    isBlogPublished: boolean
     comments: Comment[]
     authorId: string
     createdAt: string
