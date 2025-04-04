@@ -15,29 +15,30 @@ export default function CreateBlogPage() {
     const [title, setTitle] = React.useState('');
     const [image, setImage] = React.useState<File | null>(null);
     const [description, setDescription] = React.useState('');
-
     const [isBlogPublished, setIsBlogPublished] = React.useState(false);
+
+    const [createBlog, {isLoading}] = useCreateBlogMutation();
 
     const router = useRouter();
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('image', image as Blob);
-    formData.append('body', description);
-    formData.append('isBlogPublished', isBlogPublished.toString());
-
-    const [createBlog, {error, isLoading}] = useCreateBlogMutation();
-
     const handleCreateBlog = async () => {
-        const payload = await createBlog(formData).unwrap();
-        if (payload) {
-            toast.success(payload.message);
-            router.replace("/blogs");
-        }
-    }
+        try {
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('image', image as Blob);
+            formData.append('body', description);
+            formData.append('isBlogPublished', isBlogPublished.toString());
 
-    if (error) {
-        toast.error(error as string);
+            const payload = await createBlog(formData).unwrap();
+            if (payload) {
+                toast.success(payload.message);
+                router.replace("/blogs");
+            } else {
+                toast.error(payload)
+            }
+        } catch(error) {
+            console.log("Error creating blog: ", error)
+        }
     }
 
     return (
