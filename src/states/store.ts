@@ -9,7 +9,7 @@ export const store: Store = configureStore({
         authSlice: authReducer,
         [blogApi.reducerPath]: blogApi.reducer,
         [questionApi.reducerPath]: questionApi.reducer,
-        [challengeApi.reducerPath]: challengeApi.reducer,        
+        [challengeApi.reducerPath]: challengeApi.reducer,
     },
     middleware: (getDeaultMiddleware) => getDeaultMiddleware().concat(blogApi.middleware, questionApi.middleware, challengeApi.middleware),
 })
