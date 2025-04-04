@@ -1,18 +1,28 @@
 "use client"
 
-import { Suspense } from "react"
+import { Suspense, useEffect, useState } from "react"
 import ChallengeGenerator from "./challenge-generator"
 import ChallengesList from "./challenges-list"
 import { Skeleton } from "@/components/ui/skeleton"
 import Header from "@/components/shared/header/Header"
-import { useAppSelector } from "@/hooks/redux"
-import { useGetChallengesofUserQuery, useGetChallengesQuery } from "@/states/apis/challengeApi"
+import { Challenge, useGetChallengesofUserQuery, useGetChallengesQuery } from "@/states/apis/challengeApi"
 
 export default function ChallengesPage() {
-    const user = useAppSelector((state: any) => state.authSlice.user)
+    const {data: challengesDataOfUser} = useGetChallengesofUserQuery();
+    const {data: allChallengesExceptofCurrentUser} = useGetChallengesQuery();
 
-    const {data: challengesDataOfUser} = useGetChallengesofUserQuery()
-    const {data: allChallengesExceptofCurrentUser} = useGetChallengesQuery()
+    const [challengesCreatedByUser, setChallengesCreatedByUser] = useState<Challenge[]>([])
+    const [challengesCreatedByOtherUsers, setChallengesCreatedByOtherUsers] = useState<Challenge[]>([])
+
+    useEffect(()=>{
+        if(challengesDataOfUser && challengesDataOfUser?.data?.length > 0){
+            setChallengesCreatedByUser(challengesDataOfUser.data)
+        }
+
+        if(allChallengesExceptofCurrentUser && allChallengesExceptofCurrentUser?.data?.length > 0){
+            setChallengesCreatedByOtherUsers(allChallengesExceptofCurrentUser?.data)
+        }
+    }, [challengesDataOfUser, allChallengesExceptofCurrentUser])
 
     return (
         <div className="container mx-auto px-4 py-8 bg-gradient-to-br from-gray-900 to-blue-900">
@@ -31,11 +41,11 @@ export default function ChallengesPage() {
                 <div className="mt-16">
                     <h2 className="text-2xl font-semibold mb-6">Your Challenges</h2>
                     {
-                        challengesDataOfUser?.data?.length != 0 ? (
+                        challengesCreatedByUser?.length > 0 ? (
                             <Suspense fallback={<ChallengeSkeletons />}>
                                 <ChallengesList challenges={challengesDataOfUser} />
                             </Suspense>
-                    ) : (
+                        ) : (
                             <p className="text-center text-xl text-gray-300">No challenges found</p>
                         )
                     }
@@ -44,7 +54,7 @@ export default function ChallengesPage() {
                 <div className="mt-16">
                     <h2 className="text-2xl font-semibold mb-6">All Challenges</h2>
                     {
-                        allChallengesExceptofCurrentUser?.data?.length != 0 ? (
+                        challengesCreatedByOtherUsers?.length != 0 ? (
                             <Suspense fallback={<ChallengeSkeletons />}>
                                 <ChallengesList challenges={allChallengesExceptofCurrentUser} />
                             </Suspense>

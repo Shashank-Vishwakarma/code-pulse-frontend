@@ -22,7 +22,7 @@ interface QuestionDataWithCorrectAnswers {
     correct_answer: string
 }
 
-interface Challenge {
+export interface Challenge {
     id: string,
     title: string,
     topic: string,
