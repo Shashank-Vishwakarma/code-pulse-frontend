@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CalendarDays, Code, FileText, Trophy, User } from "lucide-react"
+import { CalendarDays, Code, FileText, Pencil, Trash2, Trophy, User } from "lucide-react"
 import Header from "@/components/shared/header/Header";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,10 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useAppSelector } from "@/hooks/redux";
 import { formatDate } from "@/utils/profile";
+import DeleteModal from "@/components/modals/delete-modal";
+import { useDeleteBlogMutation } from "@/states/apis/blogApi";
+import { useDeleteQuestionMutation } from "@/states/apis/questionApi";
+import { useDeleteChallengeMutation } from "@/states/apis/challengeApi";
 
 interface StatsCardProps {
     title: string
@@ -321,6 +325,8 @@ function QuestionsSubmittedCard({id, title, difficulty}: QuestionsSubmittedProps
 
 // Question Card Component
 function QuestionsCreatedCard({id, difficulty, title, createdAt}: QuestionsCreatedProps) {
+    const [deleteQuestion, {isLoading}] = useDeleteQuestionMutation();
+
     const difficultyColor = {
         Easy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
         Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
@@ -342,39 +348,99 @@ function QuestionsCreatedCard({id, difficulty, title, createdAt}: QuestionsCreat
             difficultyCol = difficultyColor.Easy
     }
 
+    const onQuestionDelete = async (id: string) => {
+        try {
+            const payload = await deleteQuestion(id).unwrap();
+            if(payload) {
+                toast.message("Question deleted successfully!");
+                window.location.reload();
+            }
+        } catch(error) {
+            console.log("Error deleting the question: ", error)
+        }
+    }
+
     return (
-        <Link href={`/problems/${id}/edit`}>
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg">{title}</CardTitle>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
-                            {difficulty}
-                        </span>
+        <Card>
+            <CardHeader>
+                <div className="flex justify-between items-start">
+                    <Link href={`/problems/${id}`}>
+                        <div className="flex gap-2">
+                            <CardTitle className="text-lg">{title}</CardTitle>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
+                                {difficulty}
+                            </span>
+                        </div>
+                    </Link>
+
+                    <div className="flex gap-4 items-center">
+                        <Link href={`/problems/${id}/edit`}>
+                            <Pencil className="w-full h-full" />
+                        </Link>
+                        <DeleteModal 
+                            title="Delete Problem" 
+                            description="Are you sure you want to delete this problem?" 
+                            isLoading={isLoading} 
+                            onDelete={() => onQuestionDelete(id)}
+                        >
+                            <Trash2 className="w-full h-full" />
+                        </DeleteModal>
                     </div>
-                    <CardDescription>Created on {new Date(createdAt).toLocaleDateString()}</CardDescription>
-                </CardHeader>
-            </Card>
-        </Link>
+                </div>
+                <CardDescription>Created on {new Date(createdAt).toLocaleDateString()}</CardDescription>
+            </CardHeader>
+        </Card>
     )
 }
 
 // Blog Card Component
-function BlogCard({title, createdAt}: BlogProps) {
+function BlogCard({id, title, createdAt}: BlogProps) {
+    const [deleteBlog, {isLoading}] = useDeleteBlogMutation()
+
+    const onBlogDelete = async (id: string) => {
+        try {
+            const payload = await deleteBlog(id).unwrap();
+            if(payload) {
+                toast.message("Blog deleted successfully");
+                window.location.reload();
+            }
+        } catch(error) {
+            console.log("Error while deleting the blog", error)
+        }
+    }
+
     return (
-        <Link href={`/blogs/${title}`}>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">{title}</CardTitle>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex flex-col gap-2">
+                    <Link href={`/blogs/${id}`}>
+                        <CardTitle className="text-lg">{title}</CardTitle>
+                    </Link>
                     <CardDescription>Published on {new Date(createdAt).toLocaleDateString()}</CardDescription>
-                </CardHeader>
-            </Card>
-        </Link>
+                </div>
+
+                <div className="flex gap-4 items-center">
+                    <Link href={`/blogs/${id}/edit`}>
+                        <Pencil className="w-full h-full" />
+                    </Link>
+                    <DeleteModal 
+                        title="Delete Blog" 
+                        description="Are you sure you want to delete this blog?" 
+                        isLoading={isLoading} 
+                        onDelete={() => onBlogDelete(id)}
+                    >
+                        <Trash2 className="w-full h-full" />
+                    </DeleteModal>
+                </div>
+            </CardHeader>
+        </Card>
     )
 }
 
 // Challenge Created Card Component
 function ChallengeCreatedCard({id, title, topic, difficulty, created_at}: ChallengesCreatedProps) {
+    const [deleteChallenge, {isLoading}] = useDeleteChallengeMutation()
+    
     const difficultyColor = {
         Beginner: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
         Intermediate: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
@@ -396,12 +462,26 @@ function ChallengeCreatedCard({id, title, topic, difficulty, created_at}: Challe
             difficultyCol = difficultyColor.Beginner
     }
 
+    const onChallengeDelete = async (id: string) => {
+        try {
+            const payload = await deleteChallenge(id).unwrap();
+            if(payload) {
+                toast.message("Challenge deleted successfully!");
+                window.location.reload();
+            }
+        } catch(error) {
+            console.log("Error deleting the challenge: ", error)
+        }
+    }
+
     return (
-        <Link href={`/challenges/${id}`}>
-            <Card>
-                <CardHeader>
+        <Card>
+            <CardHeader>
+                <Link href={`/challenges/${id}`}>
                     <CardTitle className="text-lg">{title}</CardTitle>
-                    <div className="flex justify-between items-start">
+                </Link>
+                <div className="flex justify-between items-start">
+                    <div className="flex gap-2">
                         <span className="px-2 py-1 rounded-full text-xs font-medium">
                             {topic}
                         </span>
@@ -409,10 +489,24 @@ function ChallengeCreatedCard({id, title, topic, difficulty, created_at}: Challe
                             {difficulty}
                         </span>
                     </div>
-                    <CardDescription>Created on {new Date(created_at).toLocaleDateString()}</CardDescription>
-                </CardHeader>
-            </Card>
-        </Link>
+
+                    <div className="flex gap-4 items-center">
+                        <Link href={`/challenges/${id}/edit`}>
+                            <Pencil className="w-full h-full" />
+                        </Link>
+                        <DeleteModal 
+                            title="Delete Challenge" 
+                            description="Are you sure you want to delete this challenge?" 
+                            isLoading={isLoading} 
+                            onDelete={() => onChallengeDelete(id)}
+                        >
+                            <Trash2 className="w-full h-full" />
+                        </DeleteModal>
+                    </div>
+                </div>
+                <CardDescription>Created on {new Date(created_at).toLocaleDateString()}</CardDescription>
+            </CardHeader>
+        </Card>
     )
 }
 
