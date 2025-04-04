@@ -49,6 +49,7 @@ export default function ChallengePage() {
             }
 
             toast.message(response.data?.message)
+            router.push("/challenges")
         } catch(err) {
             console.log("Error in submitting challenge: ", err)
             toast.error("Could not submit challenge")
@@ -93,10 +94,10 @@ export default function ChallengePage() {
                                 Question {index+1}: {q.question}
                             </h3>
                             <RadioGroup
-                                value={selectedAnswers[index]?.answer || ""}
+                                value={selectedAnswers.find((answer) => answer.question == q.question)?.answer || ""}
                                 onValueChange={(value) => {
-                                    selectedAnswers[index] = { question: q.question, answer: value }
-                                    setSelectedAnswers([...selectedAnswers])
+                                    const filteredOptions = selectedAnswers.filter((answer) => answer.question != q.question)
+                                    setSelectedAnswers([...filteredOptions, {question: q.question, answer: value}])
                                 }}
                                 className="space-y-3"
                                 >
@@ -106,7 +107,7 @@ export default function ChallengePage() {
                                         className={`flex items-center space-x-2 rounded-md border p-3 transition-colors ${
                                             selectedAnswers[index]?.answer === option ? "border-primary bg-primary/5" : ""
                                         }`}
-                                        >
+                                    >
                                         <RadioGroupItem value={option} id={`${index}-${option}`} />
                                         <Label htmlFor={`${index}-${option}`} className="flex-grow cursor-pointer font-normal">
                                             {option}
