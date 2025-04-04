@@ -364,7 +364,7 @@ function QuestionsCreatedCard({id, difficulty, title, createdAt}: QuestionsCreat
         <Card>
             <CardHeader>
                 <div className="flex justify-between items-start">
-                    <Link href={`/problems/${id}`}>
+                    <Link href={`/problems/${title}/?id=${id}`}>
                         <div className="flex gap-2">
                             <CardTitle className="text-lg">{title}</CardTitle>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyCol}`}>
