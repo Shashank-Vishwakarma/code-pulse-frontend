@@ -491,9 +491,6 @@ function ChallengeCreatedCard({id, title, topic, difficulty, created_at}: Challe
                     </div>
 
                     <div className="flex gap-4 items-center">
-                        <Link href={`/challenges/${id}/edit`}>
-                            <Pencil className="w-full h-full" />
-                        </Link>
                         <DeleteModal 
                             title="Delete Challenge" 
                             description="Are you sure you want to delete this challenge?" 
