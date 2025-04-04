@@ -64,7 +64,19 @@ interface ChallengesTakenProps {
     createdAt: string
 }
 
+type ActiveTab = "questions-submitted" | "questions-created" | "blogs-created" | "challenges-created" | "challenges-taken";
+
+const tabUrlMapping: Record<ActiveTab, string> = {
+    "questions-submitted": "http://localhost:8000/api/v1/questions/submitted",
+    "questions-created": "http://localhost:8000/api/v1/questions/user",
+    "blogs-created": "http://localhost:8000/api/v1/blogs/user",
+    "challenges-created": "http://localhost:8000/api/v1/challenges/user",
+    "challenges-taken": "http://localhost:8000/api/v1/challenges/taken"
+}
+
 export default function ProfilePage() {
+    const [fetchedTabs, setFetchedTabs] = useState<Set<string>>(new Set());
+
     const [activeTab, setActiveTab] = useState("questions-submitted");
 
     const [questionsSubmitted, setQuestionsSubmitted] = useState<QuestionsSubmittedProps[]>([]);
@@ -76,34 +88,12 @@ export default function ProfilePage() {
     const user = useAppSelector(state => state.authSlice.user);
 
     useEffect(()=>{
-        let url = ""
-        switch(activeTab) {
-            case "questions-submitted":
-                url = "http://localhost:8000/api/v1/questions/submitted"
-                break;
-            case "questions-created":
-                url = "http://localhost:8000/api/v1/questions/user"
-                break;
-            case "blogs-created":
-                url = "http://localhost:8000/api/v1/blogs/user"
-                break;
-            case "challenges-created":
-                url = "http://localhost:8000/api/v1/challenges/user"
-                break;
-            case "challenges-taken":
-                url = "http://localhost:8000/api/v1/challenges/taken"
-                break;
-        }
+        if(fetchedTabs.has(activeTab)) return
 
         const fetchData = async () => {
-            try {
-                // skip network request if already fetched
-                if(activeTab === "questions-submitted" && questionsSubmitted.length > 0) return
-                if(activeTab === "questions-created" && questionsCreated.length > 0) return
-                if(activeTab === "blogs-created" && blogsCreated.length > 0) return
-                if(activeTab === "challenges-created" && challengesCreated.length > 0) return
-                if(activeTab === "challenges-taken" && challengesTaken.length > 0) return
+            const url = tabUrlMapping[activeTab as ActiveTab];
 
+            try {
                 const response = await axios.get(url, {withCredentials: true});
 
                 if(!response.data) {
@@ -111,16 +101,24 @@ export default function ProfilePage() {
                     return
                 }
 
-                if (activeTab === "questions-submitted") {
-                    setQuestionsSubmitted(response.data.data as QuestionsSubmittedProps[])
-                } else if (activeTab === "questions-created") {
-                    setQuestionsCreated(response.data.data as QuestionsCreatedProps[])
-                } else if (activeTab === "blogs-created") {
-                    setBlogsCreated(response.data.data as BlogProps[])
-                } else if(activeTab === "challenges-created") {
-                    setChallengesCreated(response.data.data as ChallengesCreatedProps[])
-                } else if (activeTab === "challenges-taken") {
-                    setChallengesTaken(response.data.data as ChallengesTakenProps[])
+                fetchedTabs.add(activeTab);
+
+                switch(activeTab) {
+                    case "questions-submitted":
+                        setQuestionsSubmitted(response.data.data as QuestionsSubmittedProps[])
+                        break;
+                    case "questions-created":
+                        setQuestionsCreated(response.data.data as QuestionsCreatedProps[])
+                        break;
+                    case "blogs-created":
+                        setBlogsCreated(response.data.data as BlogProps[])
+                        break;
+                    case "challenges-created":
+                        setChallengesCreated(response.data.data as ChallengesCreatedProps[])
+                        break;
+                    case "challenges-taken":
+                        setChallengesTaken(response.data.data as ChallengesTakenProps[])
+                        break;
                 }
             } catch(error) {
                 console.log(error)
@@ -142,7 +140,6 @@ export default function ProfilePage() {
                     <Avatar className="w-24 h-24 border-4 border-background">
                         <AvatarFallback>
                             <User className="h-12 w-12" />
-                            {user?.name}
                         </AvatarFallback>
                     </Avatar>
                     <div className="space-y-2">
@@ -182,14 +179,14 @@ export default function ProfilePage() {
                     <TabsContent value="questions-submitted" className="mt-6">
                         <div className="grid gap-4">
                             {
-                                questionsSubmitted?.length === 0 ? (
-                                    <p className="text-muted-foreground text-center">
-                                        You have not submitted any questions
-                                    </p>
-                                ) : (
+                                questionsSubmitted?.length > 0 ? (
                                     questionsSubmitted?.map((question) => (
                                         <QuestionsSubmittedCard key={question.id} id={question.id} title={question.title} difficulty={question.difficulty} />
                                     ))
+                                ) : (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not submitted any questions
+                                    </p>
                                 )
                             }
                         </div>
@@ -204,14 +201,14 @@ export default function ProfilePage() {
                             </Link>
 
                             {
-                                questionsCreated?.length === 0 ? (
-                                    <p className="text-muted-foreground text-center">
-                                        You have not created any questions
-                                    </p>
-                                ) : (
+                                questionsCreated?.length > 0 ? (
                                     questionsCreated?.map((question) => (
                                         <QuestionsCreatedCard key={question.id} id={question.id} title={question.title} createdAt={question.createdAt} difficulty={question.difficulty} />
                                     ))
+                                ) : (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any questions
+                                    </p>
                                 )
                             }
                         </div>
@@ -220,14 +217,14 @@ export default function ProfilePage() {
                     <TabsContent value="blogs-created" className="mt-6">
                         <div className="grid gap-4">
                             {
-                                blogsCreated?.length === 0 ? (
-                                    <p className="text-muted-foreground text-center">
-                                        You have not created any blogs
-                                    </p>
-                                ) : (
+                                blogsCreated?.length > 0 ? (
                                     blogsCreated?.map((blog) => (
                                         <BlogCard key={blog.id} id={blog.id} title={blog.title} createdAt={blog.createdAt} />
                                     ))
+                                ) : (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any blogs
+                                    </p>
                                 )
                             }
                         </div>
@@ -236,14 +233,14 @@ export default function ProfilePage() {
                     <TabsContent value="challenges-created" className="mt-6">
                         <div className="grid gap-4">
                             {
-                                challengesCreated?.length === 0 ? (
-                                    <p className="text-muted-foreground text-center">
-                                        You have not created any challenges
-                                    </p>
-                                ) : (
+                                challengesCreated?.length > 0 ? (
                                     challengesCreated?.map((challenge) => (
                                         <ChallengeCreatedCard key={challenge.id} id={challenge.id} topic={challenge.topic} difficulty={challenge.difficulty} title={challenge.title} created_at={challenge.created_at} />
                                     ))
+                                ) : (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not created any challenges
+                                    </p>
                                 )
                             }
                         </div>
@@ -252,14 +249,14 @@ export default function ProfilePage() {
                     <TabsContent value="challenges-taken" className="mt-6">
                         <div className="grid gap-4">
                             {
-                                challengesTaken?.length === 0 ? (
-                                    <p className="text-muted-foreground text-center">
-                                        You have not attempted any challenge
-                                    </p>
-                                ) : (
+                                challengesTaken?.length > 0 ? (
                                     challengesTaken?.map((challenge) => (
                                         <ChallengeTakenCard key={challenge.id} id={challenge.id} title={challenge.title} topic={challenge.topic} difficulty={challenge.difficulty} score={challenge.score} createdAt={challenge.createdAt} />
                                     ))
+                                ) : (
+                                    <p className="text-muted-foreground text-center">
+                                        You have not attempted any challenge
+                                    </p>
                                 )
                             }
                         </div>
