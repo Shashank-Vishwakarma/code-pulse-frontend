@@ -6,25 +6,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useGetChallengeByIdQuery } from '@/states/apis/challengeApi';
-import axios from 'axios';
+import { useAppDispatch } from '@/hooks/redux';
+import { useGetChallengeByIdQuery, UserSelectedAnswer, useSubmitChallengeMutation } from '@/states/apis/challengeApi';
+import { Stats, updateStats } from '@/states/slices/authSlice';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { toast } from 'sonner';
 
-interface SelectedAnswer {
-    question: string
-    answer: string
-}
-
 export default function ChallengePage() {
     const params = useParams();
     const {data: challenge} = useGetChallengeByIdQuery(params.slug as string)
 
-    const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([])
+    const [selectedAnswers, setSelectedAnswers] = useState<UserSelectedAnswer[]>([])
+
+    const [submitChallenge, {isLoading}] = useSubmitChallengeMutation();
 
     const router = useRouter()
+
+    const dispatch = useAppDispatch();
 
     const handleSubmit = async ()=>{
         if(Object.keys(selectedAnswers).length < 10){
@@ -33,23 +34,13 @@ export default function ChallengePage() {
         }
 
         try {
-            const response = await axios.post(
-                `http://localhost:8000/api/v1/challenges/${params.slug}/submit`, 
-                { answers: selectedAnswers }, 
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                }
-            );
-            if(!response.data){
-                toast.error(response.data?.message)
-                return
-            }
+            const payload = await submitChallenge({id: params.slug as string, data: selectedAnswers}).unwrap();
+            if(payload) {
+                dispatch(updateStats({ challenges_taken: 1 } as Stats));
 
-            toast.message(response.data?.message)
-            router.push("/challenges")
+                toast.message("Challenge submitted successfully");
+                router.push("/challenges")
+            }
         } catch(err) {
             console.log("Error in submitting challenge: ", err)
             toast.error("Could not submit challenge")
@@ -121,7 +112,14 @@ export default function ChallengePage() {
                 </CardContent>
                 <CardFooter>
                     <Button className="w-full" size="lg" onClick={handleSubmit}>
-                        Submit Challenge
+                        {
+                            isLoading ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Submitting...
+                                </>
+                            ) : "Submit Challenge"
+                        }
                     </Button>
                 </CardFooter>
             </Card>

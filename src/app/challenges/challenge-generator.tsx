@@ -6,13 +6,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Sparkles, Code, Database, Braces, Code2Icon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useCreateChallengeMutation } from "@/states/apis/challengeApi"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import {updateStats, Stats} from '@/states/slices/authSlice'
+import {useAppDispatch} from '@/hooks/redux'
 
 const TOPICS = [
     { value: "javascript", label: "JavaScript", icon: <Braces className="h-4 w-4" /> },
@@ -32,6 +33,8 @@ export default function ChallengeGenerator() {
 
     const [createBlog, {isLoading}] = useCreateChallengeMutation();
 
+    const dispatch = useAppDispatch();
+
     const handleGenerate = async () => {
         try {
             const formData = new FormData();
@@ -41,6 +44,8 @@ export default function ChallengeGenerator() {
 
             const payload = await createBlog(formData).unwrap();
             if (payload) {
+                dispatch(updateStats({ challenges_created: 1 } as Stats));
+
                 toast.success(payload.message);
                 router.refresh();
             }

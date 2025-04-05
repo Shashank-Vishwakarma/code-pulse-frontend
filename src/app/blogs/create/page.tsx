@@ -10,6 +10,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/shared/header/Header';
+import { useAppDispatch } from '@/hooks/redux';
+import {Stats, updateStats} from '@/states/slices/authSlice'
 
 export default function CreateBlogPage() {
     const [title, setTitle] = React.useState('');
@@ -21,6 +23,8 @@ export default function CreateBlogPage() {
 
     const router = useRouter();
 
+    const dispatch = useAppDispatch();
+
     const handleCreateBlog = async () => {
         try {
             const formData = new FormData();
@@ -31,6 +35,8 @@ export default function CreateBlogPage() {
 
             const payload = await createBlog(formData).unwrap();
             if (payload) {
+                dispatch(updateStats({ blogs_created: 1 } as Stats));
+
                 toast.success(payload.message);
                 router.replace("/blogs");
             } else {

@@ -23,6 +23,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Header from '@/components/shared/header/Header';
 import { useCreateQuestionMutation } from '@/states/apis/questionApi';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/hooks/redux';
+import { Stats, updateStats } from '@/states/slices/authSlice';
 
 export const formSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
@@ -76,10 +78,14 @@ export default function CreateProblemPage() {
     const [createQuestion, {isLoading}] = useCreateQuestionMutation();
     const router = useRouter()
 
+    const dispatch = useAppDispatch();
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             const payload = await createQuestion(values).unwrap();
             if (payload) {
+                dispatch(updateStats({ questions_created: 1 } as Stats));
+
                 toast.success("Question Created successfully!"); 
                 router.replace("/problems");
             }

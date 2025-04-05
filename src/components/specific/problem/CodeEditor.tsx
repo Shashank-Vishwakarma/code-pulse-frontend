@@ -13,12 +13,16 @@ import {
 import { CodeSnippet } from '@/states/apis/questionApi'
 import axios from 'axios'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useAppDispatch } from '@/hooks/redux'
+import {Stats, updateStats} from '@/states/slices/authSlice'
 
 export default function CodeEditor({questionId, codeSnippets}: {questionId: string, codeSnippets: CodeSnippet[] | undefined}) {
     const [language, setLanguage] = useState('python')
     const [code, setCode] = useState<string>("")
     const [output, setOutput] = useState(`No Output Available`);
     const editorRef = useRef(null)
+
+    const dispatch = useAppDispatch();
 
     useEffect(()=>{
         setCode(prev => codeSnippets?.find((snippet) => snippet.language.toLowerCase() === language)?.code || "")
@@ -74,6 +78,11 @@ export default function CodeEditor({questionId, codeSnippets}: {questionId: stri
             }
             
             setOutput(out)
+
+            // dispatch to store
+            if(type == "submit") {
+                dispatch(updateStats({ questions_submitted: 1 } as Stats));
+            }
         }
     }
 
