@@ -1,8 +1,10 @@
 "use client"
 
 import Header from '@/components/shared/header/Header'
+import { useAppSelector } from '@/hooks/redux'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useGetQuestionsQuery } from '@/states/apis/questionApi'
+import { RootState } from '@/states/store'
 import { 
     Code, 
     Database, 
@@ -26,6 +28,13 @@ export default function ProblemsPage() {
     const searchQueryDebounced = useDebounce(searchQuery, 500);
     const { data, error, isLoading } = useGetQuestionsQuery(searchQueryDebounced)
     const router = useRouter()
+
+    const user = useAppSelector((state: RootState) => state.authSlice.user)
+
+    if(!user) {
+        router.push("/login")
+        return
+    }
 
     const getDifficultyColor = (difficulty: string) => {
         switch (difficulty) {
@@ -76,7 +85,7 @@ export default function ProblemsPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {data?.data && data?.data?.map((problem) => (
+                            {data?.data && data?.data?.length > 0 && !isLoading && data?.data?.map((problem) => (
                                 <tr onClick={()=> router.push(`/problems/${problem.slug}?id=${problem.id}`)} key={problem.id} className="border-b border-white/10 hover:bg-white/20 transition-colors cursor-pointer">
                                     <td className="px-6 py-4">{problem.title}</td>
                                     <td className="px-6 py-4">
@@ -93,6 +102,12 @@ export default function ProblemsPage() {
                             ))}
                         </tbody>
                     </table>
+
+                    {
+                        !data?.data && !isLoading && (
+                            <p className="text-white text-lg p-6 text-center">No problems found. Try creating a problem from your profile.</p>
+                        )
+                    }
                 </div>
             </div>
         </main>
