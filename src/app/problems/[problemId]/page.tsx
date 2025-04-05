@@ -8,10 +8,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSearchParams } from 'next/navigation'
 import { useGetQuestionByIdQuery } from '@/states/apis/questionApi'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Loader2 } from 'lucide-react'
 
 export default function ProblemPage() {
     const params = useSearchParams()
-    const {data: problemData, error, isLoading} = useGetQuestionByIdQuery(params?.get('id') as string);
+    const {data: problemData, isLoading} = useGetQuestionByIdQuery(params?.get('id') as string);
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">
@@ -27,15 +28,23 @@ export default function ProblemPage() {
                         </TabsList>
 
                         <TabsContent value='description'  className="w-full">
-                            <ProblemDescription 
-                                title={problemData?.data?.title as string}
-                                difficulty={problemData?.data?.difficulty as Difficulty}
-                                topics={problemData?.data?.tags || []}
-                                description={problemData?.data?.description as string}
-                                examples={problemData?.data?.testCases || []}
-                                companies={problemData?.data?.companies || []}
-                                hints={problemData?.data?.hints || []}
-                            />
+                            {
+                                isLoading ? (
+                                    <div className='w-full h-full flex items-center justify-center'>
+                                        <Loader2 className="h-8 w-8 animate-spin" />
+                                    </div>
+                                ) : (
+                                    <ProblemDescription 
+                                        title={problemData?.data?.title as string}
+                                        difficulty={problemData?.data?.difficulty as Difficulty}
+                                        topics={problemData?.data?.tags || []}
+                                        description={problemData?.data?.description as string}
+                                        examples={problemData?.data?.testCases || []}
+                                        companies={problemData?.data?.companies || []}
+                                        hints={problemData?.data?.hints || []}
+                                    />
+                                )
+                            }
                         </TabsContent>
 
                         <TabsContent value='submissions'  className="mt-6">
