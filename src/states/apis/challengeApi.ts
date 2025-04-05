@@ -6,7 +6,7 @@ interface Userdata {
     username: string
 }
 
-interface UserSelectedAnswer {
+export interface UserSelectedAnswer {
     question: string,
     answer: string
 }
@@ -35,7 +35,12 @@ export interface Challenge {
     created_at: string
 }
 
-interface ChallengeWithCorrectAnswers {
+interface UserChallengeSubmissionData {
+    submitted_by_user_id: string,
+    user_selected_answers: UserSelectedAnswer[],
+}
+
+export interface ChallengeWithCorrectAnswers {
     id: string,
     title: string,
     topic: string,
@@ -44,7 +49,7 @@ interface ChallengeWithCorrectAnswers {
     user_data: Userdata,
     data: QuestionDataWithCorrectAnswers[],
     score: string,
-    user_selected_answers: UserSelectedAnswer[],
+    user_submission_data: UserChallengeSubmissionData[]
     created_at: string
 }
 

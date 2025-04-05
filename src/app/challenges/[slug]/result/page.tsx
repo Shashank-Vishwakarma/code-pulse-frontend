@@ -1,67 +1,81 @@
 "use client"
 
+import Header from "@/components/shared/header/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetCorrectAnswersForChallengeQuery } from "@/states/apis/challengeApi";
+import { useAppSelector } from "@/hooks/redux";
+import { ChallengeWithCorrectAnswers, useGetCorrectAnswersForChallengeQuery, UserSelectedAnswer } from "@/states/apis/challengeApi";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export function ChallengeResult() {
+export default function ChallengeResult() {
     const params = useParams();
-
     const {data: challenge} = useGetCorrectAnswersForChallengeQuery(params.slug as string);
+
+    const user = useAppSelector(state => state.authSlice.user);
+
+    const [challengeData, setChallengeData] = useState<ChallengeWithCorrectAnswers | null>(null);
+    const [UserSelectedAnswers, setUserSelectedAnswers] = useState<UserSelectedAnswer[]>([]);
+
     const router = useRouter();
 
+    useEffect(()=>{
+        if(!challenge) return;
+
+        setChallengeData(challenge.data);
+
+        const userChallengeSubmissionData = challenge.data.user_submission_data.find((d) => d.submitted_by_user_id === user?.id);
+        setUserSelectedAnswers(userChallengeSubmissionData?.user_selected_answers || []);
+    }, [challenge])
+
     return (
-        <div className="container max-w-4xl mx-auto py-10 px-4">
-            <Card className="w-full">
+        <div className="container mx-auto py-10 px-4 bg-gradient-to-br from-gray-900 to-blue-900">
+            <div className="mb-12">
+                <Header />
+            </div>
+
+            <Card className="w-3/4 mx-auto">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-3xl">Challenge Results</CardTitle>
+                    <CardTitle className="text-3xl">
+                        {challengeData?.title}
+                    </CardTitle>
                     <CardDescription>
-                        You scored {challenge!.data?.score} {parseInt(challenge!.data?.score?.split("/")[0])} out of 10 questions correct)
+                        <p className="text-center text-2xl">You scored {challengeData?.score}</p>
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center py-10">
-                    <div className="w-full max-w-md">
-                        <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary">
-                            <div
-                                className="h-full bg-primary transition-all duration-500 ease-in-out"
-                                style={{ width: `${parseInt(challenge!.data?.score?.split("/")[0])}%` }}
-                            />
-                        </div>
-                        <div className="mt-8 space-y-4">
-                            {challenge?.data.data?.map((q, index) => (
-                                <div key={index} className="rounded-lg border p-4">
-                                    <p className="font-medium">{q.question}</p>
-                                    <div className="mt-2 flex items-center justify-between">
-                                        <p>
-                                            Your answer:{" "}
-                                            <span
-                                                className={
-                                                    challenge.data.user_selected_answers[index].answer === q.correct_answer
-                                                    ? "text-green-600 font-medium"
-                                                    : "text-red-600 font-medium"
-                                                }
-                                            >
-                                            {challenge.data.user_selected_answers[index].answer}
-                                            </span>
-                                        </p>
-                                        {challenge.data.user_selected_answers[index].answer === q.correct_answer && (
-                                            <p className="text-green-600 font-medium">Correct: {q.correct_answer}</p>
-                                        )}
+                <CardContent className="w-full flex flex-col items-center">
+                    <div className="w-full space-y-4">
+                            {challengeData?.data?.map((q, index) => (
+                                <div key={index} className="rounded-lg border-2 border-solid p-4 w-full">
+                                    <p className="font-medium">{index+1}. {q.question}</p>
+                                    <div className="mt-2 flex flex-col gap-2">
+                                        <div
+                                            className={
+                                                UserSelectedAnswers?.find((ans)=>ans.question == q.question)?.answer == q.correct_answer
+                                                ? "text-green-600 font-medium"
+                                                : "text-red-600 font-medium"
+                                            }
+                                        >
+                                            Your answer:{" "}{UserSelectedAnswers?.find((ans)=>ans.question == q.question)?.answer}
+                                        </div>
+                                        <div>
+                                            {UserSelectedAnswers?.find((ans)=>ans.question == q.question)?.question == q.question && (
+                                                <p className="font-medium text-zinc-500">Correct Answer: {q.correct_answer}</p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
                 </CardContent>
                 <CardFooter>
                     <Link href="/challenges">
                         <Button
-                        className="w-full"
-                        onClick={() => {
-                            router.push("/challenges");
-                        }}
+                            className="w-full"
+                            onClick={() => {
+                                router.push("/challenges");
+                            }}
                         >
                             Go back to Challenges
                         </Button>
