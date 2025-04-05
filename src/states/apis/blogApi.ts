@@ -1,9 +1,15 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
+interface User {
+    name: string
+    username: string
+}
+
 export interface Comment {
     id:        string
     body:      string
     userId:    string
+    user: User
     blogId:    string
     createdAt: string
 }
@@ -74,8 +80,17 @@ export const blogApi = createApi({
                 method: 'DELETE'
             }),
             invalidatesTags: ['Blogs']
+        }),
+        createComment: builder.mutation({
+            query: ({id, body}: {id: string, body: string}) => ({
+                url: `/${id}/comments`,
+                body: {
+                    body
+                },
+                method: 'POST'
+            })
         })
     })
 })
 
-export const {useGetBlogsQuery, useGetBlogByIdQuery, useCreateBlogMutation, useUpdateBlogMutation, useDeleteBlogMutation} = blogApi
+export const {useGetBlogsQuery, useGetBlogByIdQuery, useCreateBlogMutation, useUpdateBlogMutation, useDeleteBlogMutation, useCreateCommentMutation} = blogApi
