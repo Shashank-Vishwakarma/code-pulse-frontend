@@ -1,6 +1,7 @@
 "use client"
 
 import Header from '@/components/shared/header/Header'
+import { Input } from '@/components/ui/input'
 import { useAppSelector } from '@/hooks/redux'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useGetQuestionsQuery } from '@/states/apis/questionApi'
@@ -26,7 +27,7 @@ const problemCategories = [
 export default function ProblemsPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const searchQueryDebounced = useDebounce(searchQuery, 500);
-    const { data, error, isLoading } = useGetQuestionsQuery(searchQueryDebounced)
+    const { data, isLoading } = useGetQuestionsQuery(searchQueryDebounced)
     const router = useRouter()
 
     const user = useAppSelector((state: RootState) => state.authSlice.user)
@@ -73,6 +74,17 @@ export default function ProblemsPage() {
                             </button>
                         ))}
                     </div>
+                </div>
+
+                {/* Used deboucing for search and automatic fetch data using RTK Query */}
+                <div className="w-full mx-auto mb-12 flex flex-row justify-center items-center">
+                    <Input
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        type='text' 
+                        placeholder="Search for a problem" 
+                        className="w-1/2 px-4 py-2 rounded-md bg-gray-800 text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"  
+                    />
                 </div>
 
                 <div className="bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden">

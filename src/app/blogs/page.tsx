@@ -45,7 +45,7 @@ export default function BlogsPage() {
                 </Link>
             </div>
 
-            {/* Used deboucing fot search and automatic fetch data using RTK Query */}
+            {/* Used deboucing for search and automatic fetch data using RTK Query */}
             <div className="w-full mx-auto mb-12 flex flex-row justify-center items-center">
                 <Input 
                     value={searchQuery}

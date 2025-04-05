@@ -159,11 +159,11 @@ export default function ProfilePage() {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <StatsCard title="Question Submissions" value={user?.stats?.questions_submitted || "N/A"} icon={<Code className="h-4 w-4" />} />
-                    <StatsCard title="Questions Created" value={user?.stats?.questions_created || "N/A"} icon={<Code className="h-4 w-4" />} />
-                    <StatsCard title="Blogs" value={user?.stats?.blogs_created || "N/A"} icon={<FileText className="h-4 w-4" />} />
-                    <StatsCard title="Challenges Created" value={user?.stats?.challenges_created || "N/A"} icon={<Trophy className="h-4 w-4" />} />
-                    <StatsCard title="Challenges Taken" value={user?.stats?.challenges_taken || "N/A"} icon={<Trophy className="h-4 w-4" />} />
+                    <StatsCard title="Question Submissions" value={user?.stats?.questions_submitted || "0"} icon={<Code className="h-4 w-4" />} />
+                    <StatsCard title="Questions Created" value={user?.stats?.questions_created || "0"} icon={<Code className="h-4 w-4" />} />
+                    <StatsCard title="Blogs" value={user?.stats?.blogs_created || "0"} icon={<FileText className="h-4 w-4" />} />
+                    <StatsCard title="Challenges Created" value={user?.stats?.challenges_created || "0"} icon={<Trophy className="h-4 w-4" />} />
+                    <StatsCard title="Challenges Taken" value={user?.stats?.challenges_taken || "0"} icon={<Trophy className="h-4 w-4" />} />
                 </div>
 
                 {/* Content Tabs */}
