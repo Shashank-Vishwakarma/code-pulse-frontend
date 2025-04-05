@@ -25,7 +25,7 @@ import { setUser } from "@/states/slices/authSlice"
 
 const loginFormSchema = z.object({
     identifier: z.string({message: "Please provide your email or username"}),
-    password: z.string({message: "Please provide your password"}).min(8, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
+    password: z.string({message: "Please provide your password"}).min(6, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
 })
 
 export default function LoginPage() {

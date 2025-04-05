@@ -25,8 +25,8 @@ const signUpFormSchema = z.object({
     name: z.string({message: "Please provide your name"}),
     email: z.string({message: "Please provide your email"}).email({message: "Please provide a valid email address"}),
     username: z.string({message: "Please provide your username"}).min(3, {message: "Username must be at least 3 characters"}).max(20, {message: "Username must be at most 20 characters"}),
-    password: z.string({message: "Please provide your password"}).min(8, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
-    confirmPassword: z.string({message: "Please provide confirm password"}).min(8, {message: "Confirm Password must be at least 6 characters"}).max(20, {message: "Confirm Password must be at most 20 characters"}),
+    password: z.string({message: "Please provide your password"}).min(6, {message: "Password must be at least 6 characters"}).max(20, {message: "Password must be at most 20 characters"}),
+    confirmPassword: z.string({message: "Please provide confirm password"}).min(6, {message: "Confirm Password must be at least 6 characters"}).max(20, {message: "Confirm Password must be at most 20 characters"}),
 })
 
 export default function SignUpPage() {
