@@ -8,6 +8,11 @@ export interface Comment {
     createdAt: string
 }
 
+interface Author {
+    name: string
+    username: string
+}
+
 export interface Blog {
     id: string
     title: string
@@ -17,6 +22,7 @@ export interface Blog {
     isBlogPublished: boolean
     comments: Comment[]
     authorId: string
+    author: Author
     createdAt: string
 }
 

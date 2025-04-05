@@ -1,63 +1,74 @@
 "use client"
 
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useGetBlogByIdQuery } from '@/states/apis/blogApi';
-import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import React from 'react'
-import Markdown from 'react-markdown';
+import Image from "next/image"
+import { formatDistanceToNow } from "date-fns"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import Header from "@/components/shared/header/Header"
+import BlogComments from "./blog-comments"
+import { useEffect, useState } from "react"
+import { Blog, useGetBlogByIdQuery } from "@/states/apis/blogApi"
+import { useParams } from "next/navigation"
+import Markdown from "react-markdown"
 
-export default function BlogPage() {
-    const params = useSearchParams()
-    const {data} = useGetBlogByIdQuery(params?.get('id') as string);
+export default function BlogByIdPage() {
+    const {slug} = useParams();
+    const {data: blog} = useGetBlogByIdQuery(slug as string);
+
+    const [blogData, setBlogData] = useState<Blog>()
+
+    useEffect(() => {
+        if(!blog) return
+
+        setBlogData(blog?.data)
+    }, [blog])
 
     return (
-        <div className='h-screen flex flex-col justify-center gap-4 bg-gradient-to-br from-gray-200 to-gray-300'>
-            <div className='px-10 py-4 flex-1'>
-                <Image 
-                    src={data?.data.imageUrl as string} 
-                    alt={data?.data.title || "Blog Image"}
-                    width={1000} 
-                    height={1000} 
-                    className='w-full h-96 object-cover rounded-lg' 
-                />
+        <div className="min-h-screen bg-background">
+            <div className="mb-12">
+                <Header />
             </div>
-            <div className='text-black flex-1 px-10'>
-                <h1 className='bg-gray-300 text-2xl font-bold text-center p-4 rounded-lg'>{data?.data.title}</h1>
-                <Markdown children={data?.data.body} className='mt-4 bg-gray-300 px-10 py-2 rounded-lg'/>
-            </div>
-            <div className='px-10 py-4 w-full flex justify-center'>
-                <Drawer>
-                    <DrawerTrigger>
-                        <span className='bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg'>Show Comments</span>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <DrawerHeader>
-                            <DrawerTitle>Comments</DrawerTitle>
-                            <DrawerDescription>
-                                {
-                                    data && !data.data.comments && (
-                                        <span className='text-center'>No comments yet</span>
-                                    )
-                                }
-                                {
-                                    data && data.data.comments && (
-                                        <ScrollArea className='h-96'>
-                                            {
-                                                data && data.data.comments && data.data.comments.map((comment) => (
-                                                    <div key={comment.id}>
-                                                        <p>{comment.body}</p>
-                                                    </div>
-                                                ))
-                                            }
-                                        </ScrollArea>
-                                    )
-                                }
-                            </DrawerDescription>
-                        </DrawerHeader>
-                    </DrawerContent>
-                </Drawer>
+            
+            <div className="container mx-auto px-8 py-8">
+                <div className="relative h-[400px] w-full overflow-hidden rounded-lg mb-8">
+                    <Image 
+                        src={blogData?.imageUrl || "/placeholder.svg"} 
+                        alt={blogData?.title || "Blog Image"} 
+                        fill 
+                        className="object-cover" 
+                        priority 
+                    />
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Main Content */}
+                    <div className="flex-1">
+                        <h1 className="text-3xl md:text-4xl font-bold mb-4">{blogData?.title}</h1>
+
+                        <div className="flex items-center gap-2 text-muted-foreground mb-6">
+                            <Avatar className="h-6 w-6">
+                                <AvatarFallback>
+                                    {blogData?.author?.name.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
+                            <span>{blogData?.author?.name}</span>
+                            <span>•</span>
+                            <span>
+                                {blogData?.createdAt && !isNaN(new Date(blogData.createdAt).getTime())
+                                    ? formatDistanceToNow(new Date(blogData.createdAt), { addSuffix: true })
+                                    : "Unknown"}
+                            </span>
+                        </div>
+
+                        <div className="prose prose-lg max-w-none dark:prose-invert">
+                            <Markdown>
+                                {blogData?.body}
+                            </Markdown>
+                        </div>
+                    </div>
+
+                    {/* Comments Sidebar */}
+                    <BlogComments comments={blogData?.comments || []} />
+                </div>
             </div>
         </div>
     )
