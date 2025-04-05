@@ -7,6 +7,7 @@ import React from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSearchParams } from 'next/navigation'
 import { useGetQuestionByIdQuery } from '@/states/apis/questionApi'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function ProblemPage() {
     const params = useSearchParams()
@@ -19,15 +20,30 @@ export default function ProblemPage() {
             </div>
             <div className="flex flex-1 overflow-hidden">
                 <ScrollArea className="w-2/5 overflow-y-auto border-r p-4">
-                    <ProblemDescription 
-                        title={problemData?.data?.title as string}
-                        difficulty={problemData?.data?.difficulty as Difficulty}
-                        topics={problemData?.data?.tags || []}
-                        description={problemData?.data?.description as string}
-                        examples={problemData?.data?.testCases || []}
-                        companies={problemData?.data?.companies || []}
-                        hints={problemData?.data?.hints || []}
-                    />
+                    <Tabs defaultValue='description'>
+                        <TabsList className='grid grid-cols-2 w-full'>
+                            <TabsTrigger value='description'>Description</TabsTrigger>
+                            <TabsTrigger value='submissions'>Submissions</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value='description'  className="w-full">
+                            <ProblemDescription 
+                                title={problemData?.data?.title as string}
+                                difficulty={problemData?.data?.difficulty as Difficulty}
+                                topics={problemData?.data?.tags || []}
+                                description={problemData?.data?.description as string}
+                                examples={problemData?.data?.testCases || []}
+                                companies={problemData?.data?.companies || []}
+                                hints={problemData?.data?.hints || []}
+                            />
+                        </TabsContent>
+
+                        <TabsContent value='submissions'  className="mt-6">
+                            <div className='text-center text-muted-foreground mt-6'>
+                                No Submissions found
+                            </div>
+                        </TabsContent>
+                    </Tabs>
                 </ScrollArea>
 
                 {/* Code Editor and Console - Right Panel */}
