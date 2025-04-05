@@ -2,10 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useGetBlogsQuery } from '@/states/apis/blogApi'
-import Image from 'next/image'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/shared/header/Header'
@@ -59,43 +57,6 @@ export default function BlogsPage() {
             </div>
 
             <BlogCard data={data} />
-
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-3/4">
-                {data?.data && data?.data.map((post) => (
-                    <Link 
-                        href={`/blogs/${post.slug}`}
-                        key={post.id} 
-                    >
-                        <Card key={post.id}>
-                            <CardHeader>
-                                <CardTitle className='flex justify-between'>
-                                    <span className='text-xl'>
-                                        {
-                                            post.title
-                                        }
-                                    </span>
-                                </CardTitle>
-                                <CardDescription>
-                                    {
-                                        post && post.body?.length > 100
-                                        ? `${post.body.substring(0, 100)}...`
-                                        : post.body
-                                    }
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Image 
-                                    src={post.imageUrl}
-                                    alt={post.title}
-                                    className='w-full h-40 object-cover rounded-md'
-                                    width={400}
-                                    height={300}
-                                />
-                            </CardContent>
-                        </Card>
-                    </Link>
-                ))}
-            </div> */}
 
             <div className=''>
                 {isLoading && (
