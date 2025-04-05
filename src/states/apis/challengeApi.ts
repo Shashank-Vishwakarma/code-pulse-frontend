@@ -106,8 +106,25 @@ export const challengeApi = createApi({
                 method: 'DELETE'
             }),
             invalidatesTags: ['Challenges']
+        }),
+        submitChallenge: builder.mutation({
+            query: ({id, data}: {id: string, data: UserSelectedAnswer[]}) => ({
+                url: `/${id}/submit`,
+                body: {
+                    answers: data,
+                },
+                method: 'POST',
+            })
         })
     })
 })
 
-export const {useGetChallengesQuery, useGetChallengeByIdQuery, useGetChallengesofUserQuery, useGetCorrectAnswersForChallengeQuery, useCreateChallengeMutation, useDeleteChallengeMutation} = challengeApi
+export const {
+    useGetChallengesQuery, 
+    useGetChallengeByIdQuery, 
+    useGetChallengesofUserQuery, 
+    useGetCorrectAnswersForChallengeQuery, 
+    useCreateChallengeMutation, 
+    useDeleteChallengeMutation,
+    useSubmitChallengeMutation,
+} = challengeApi
