@@ -67,7 +67,7 @@ export default function BlogByIdPage() {
                     </div>
 
                     {/* Comments Sidebar */}
-                    <BlogComments comments={blogData?.comments || []} />
+                    <BlogComments id={slug as string} comments={blogData?.comments || []} />
                 </div>
             </div>
         </div>
