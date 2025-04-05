@@ -28,13 +28,21 @@ export default function ProblemsPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const searchQueryDebounced = useDebounce(searchQuery, 500);
     const { data, isLoading } = useGetQuestionsQuery(searchQueryDebounced)
+
     const router = useRouter()
 
-    const user = useAppSelector((state: RootState) => state.authSlice.user)
+    useEffect(() => {
+        if (searchQueryDebounced) {
+            router.push("/problems?q=" + searchQueryDebounced);
+        } else {
+            router.push("/problems");
+        }
+    }, [searchQueryDebounced, router]);
 
+    const user = useAppSelector((state: RootState) => state.authSlice.user)
     if(!user) {
-        router.push("/login")
-        return
+        router.replace("/login")
+        return null
     }
 
     const getDifficultyColor = (difficulty: string) => {
@@ -44,14 +52,6 @@ export default function ProblemsPage() {
             case 'Hard': return 'text-red-500'
         }
     }
-
-    useEffect(() => {
-        if (searchQueryDebounced) {
-            router.push("/problems?q=" + searchQueryDebounced);
-        } else {
-            router.push("/problems");
-        }
-    }, [searchQueryDebounced, router]);
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">
