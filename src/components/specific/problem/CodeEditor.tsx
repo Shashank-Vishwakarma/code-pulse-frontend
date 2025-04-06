@@ -15,12 +15,16 @@ import axios from 'axios'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppDispatch } from '@/hooks/redux'
 import {Stats, updateStats} from '@/states/slices/authSlice'
+import { Loader2 } from 'lucide-react'
 
 export default function CodeEditor({questionId, codeSnippets}: {questionId: string, codeSnippets: CodeSnippet[] | undefined}) {
     const [language, setLanguage] = useState('python')
     const [code, setCode] = useState<string>("")
     const [output, setOutput] = useState(`No Output Available`);
     const editorRef = useRef(null)
+
+    const [isRunning, setIsRunning] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const dispatch = useAppDispatch();
 
@@ -42,47 +46,62 @@ export default function CodeEditor({questionId, codeSnippets}: {questionId: stri
     }
 
     const handleExecute = async (type: string) => {
-        const payload = {
-            language: language,
-            code: code,
-            type: type,
+        if(type == "run") {
+            setIsRunning(true)
+            setOutput("Running your code...Please wait a moment")
+        } else if(type == "submit") {
+            setIsSubmitting(true)
+            setOutput("Submitting your code...Please wait a moment")
         }
 
-        const response = await axios.post(
-                `http://localhost:8000/api/v1/questions/${questionId}/execute/`,
-                payload,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                }
-            )
-        if (!response.data) {
-            setOutput(response.data.message)
-        } else {
-            let out = ``
-            for(let i = 0; i < response.data.data?.length; i++) {
-                const result = response.data.data[i]["result"] as boolean
-                if (result) {
-                    out += `Testcase ${i+1}: Passed\n`
-                } else {
-                    out += `Testcase ${i+1}: Failed\n`
-                }
-                if (type === "run") {
-                    out += `Input: ${response.data.data[i]["input"]}\n`
-                    out += `Output : ${response.data.data[i]["output"]}\n`
-                    out += `Expected : ${response.data.data[i]["expected"]}\n`
-                }
-                out += `\n`
+        try{
+            const payload = {
+                language: language,
+                code: code,
+                type: type,
             }
-            
-            setOutput(out)
 
-            // dispatch to store
-            if(type == "submit") {
-                dispatch(updateStats({ questions_submitted: 1 } as Stats));
+            const response = await axios.post(
+                    `http://localhost:8000/api/v1/questions/${questionId}/execute/`,
+                    payload,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        withCredentials: true,
+                    }
+                )
+            if (!response.data) {
+                setOutput(response.data.message)
+            } else {
+                let out = ``
+                for(let i = 0; i < response.data.data?.length; i++) {
+                    const result = response.data.data[i]["result"] as boolean
+                    if (result) {
+                        out += `Testcase ${i+1}: Passed\n`
+                    } else {
+                        out += `Testcase ${i+1}: Failed\n`
+                    }
+                    if (type === "run") {
+                        out += `Input: ${response.data.data[i]["input"]}\n`
+                        out += `Output : ${response.data.data[i]["output"]}\n`
+                        out += `Expected : ${response.data.data[i]["expected"]}\n`
+                    }
+                    out += `\n`
+                }
+                
+                setOutput(out)
+
+                // dispatch to store
+                if(type == "submit") {
+                    dispatch(updateStats({ questions_submitted: 1 } as Stats));
+                }
             }
+        } catch(err) {
+            console.log("Error in executing code", err)
+        } finally {
+            setIsRunning(false)
+            setIsSubmitting(false)
         }
     }
 
@@ -109,14 +128,18 @@ export default function CodeEditor({questionId, codeSnippets}: {questionId: stri
                         className="bg-green-600 text-white hover:bg-green-700"
                         onClick={() => handleExecute("run")}
                     >
-                        Run
+                        {
+                            isRunning ? <Loader2 className='w-4 h-4 animate-spin' /> : "Run"
+                        }
                     </Button>
                     <Button 
                         variant="default" 
                         className="bg-blue-600 text-white hover:bg-blue-700"
                         onClick={() => handleExecute("submit")}
                     >
-                        Submit
+                        {
+                            isSubmitting ? <Loader2 className='w-4 h-4 animate-spin' /> : "Submit"
+                        }
                     </Button>
                 </div>
             </div>
