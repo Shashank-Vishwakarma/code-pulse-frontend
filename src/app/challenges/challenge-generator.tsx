@@ -4,9 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import { Loader2, Sparkles, Code, Database, Braces, Code2Icon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useCreateChallengeMutation } from "@/states/apis/challengeApi"
@@ -22,12 +20,16 @@ const TOPICS = [
     { value: "python", label: "Python", icon: <Code2Icon className="h-4 w-4" /> },
 ]
 
-const DIFFICULTY_LABELS = ["Beginner", "Intermediate", "Advanced"]
+const DIFFICULTY = [
+    { value: "Beginner", label: "Beginner" },
+    { value: "Intermediate", label: "Intermediate" },
+    { value: "Advanced", label: "Advanced" },
+]
 
 export default function ChallengeGenerator() {
     const [title, setTitle] = useState("")
     const [topic, setTopic] = useState("")
-    const [difficulty, setDifficulty] = useState([1])
+    const [difficulty, setDifficulty] = useState("")
 
     const router = useRouter()
 
@@ -36,11 +38,16 @@ export default function ChallengeGenerator() {
     const dispatch = useAppDispatch();
 
     const handleGenerate = async () => {
+        if(title==="" || topic==="" || difficulty==="") {
+            toast.error("Please fill all the fields")
+            return
+        }
+
         try {
             const formData = new FormData();
             formData.append('title', title);
             formData.append('topic', topic);
-            formData.append('difficulty', DIFFICULTY_LABELS[difficulty[0]]);
+            formData.append('difficulty', difficulty);
 
             const payload = await createBlog(formData).unwrap();
             if (payload) {
@@ -62,7 +69,7 @@ export default function ChallengeGenerator() {
                         <Sparkles className="h-5 w-5 text-primary" />
                         Generate Challenge
                     </CardTitle>
-                    <CardDescription>Select a topic and difficulty level to generate a custom coding challenge</CardDescription>
+                    <CardDescription>Select a topic and difficulty level to generate a custom challenge</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
@@ -94,11 +101,21 @@ export default function ChallengeGenerator() {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="flex justify-between">
-                            <Label>Difficulty Level</Label>
-                            <Badge variant="outline">{DIFFICULTY_LABELS[difficulty[0] - 1]}</Badge>
-                        </div>
-                        <Slider value={difficulty} onValueChange={setDifficulty} max={3} min={1} step={1} className="py-2" />
+                        <Label htmlFor="difficulty">Programming Topic</Label>
+                        <Select value={difficulty} onValueChange={setDifficulty}>
+                            <SelectTrigger id="difficulty">
+                                <SelectValue placeholder="Select a difficulty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {DIFFICULTY.map((difficulty) => (
+                                    <SelectItem key={difficulty.value} value={difficulty.value}>
+                                        <div className="flex items-center gap-2">
+                                            {difficulty.label}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </CardContent>
                 <CardFooter>
