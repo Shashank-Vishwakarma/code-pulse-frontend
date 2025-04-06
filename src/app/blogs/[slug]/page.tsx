@@ -9,6 +9,9 @@ import { useEffect, useState } from "react"
 import { Blog, useGetBlogByIdQuery } from "@/states/apis/blogApi"
 import { useParams } from "next/navigation"
 import Markdown from "react-markdown"
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/github-dark.css' // or any other theme
 
 export default function BlogByIdPage() {
     const {slug} = useParams();
@@ -60,7 +63,10 @@ export default function BlogByIdPage() {
                         </div>
 
                         <div className="prose prose-lg max-w-none dark:prose-invert">
-                            <Markdown>
+                            <Markdown 
+                                remarkPlugins={[remarkGfm]}
+                                rehypePlugins={[rehypeHighlight]}
+                            >
                                 {blogData?.body}
                             </Markdown>
                         </div>
