@@ -245,7 +245,8 @@ export default function EditProblemPage() {
                             <div className="space-y-4">
                                 <div className='flex flex-col gap-2'>
                                     <FormLabel>* Test Cases</FormLabel>
-                                    <span className='text-slate-500 text-sm'>Atleast 2 test cases are required</span>
+                                    <p className='text-slate-500 text-sm'>Atleast 2 test cases are required</p>
+                                    <p className='text-slate-500 text-sm'>Note: In case of string input, use single quotes. Example: 'abc'</p>
                                 </div>
                                 {testCases.map((testCase, index) => (
                                     <div key={index} className="flex gap-4 items-start">

@@ -43,12 +43,12 @@ export default function QuestionsCreatedCard({id, difficulty, title, createdAt}:
     const onQuestionDelete = async (id: string) => {
         try {
             const payload = await deleteQuestion(id).unwrap();
-            if(payload?.data == true) {
-                dispatch(updateStats({ questions_created: -1, questions_submitted: -1 } as Stats));
+            if(payload?.data == false) {
+                dispatch(updateStats({ questions_created: -1 } as Stats));
                 toast.message("Question deleted successfully!");
                 window.location.reload();
-            } else if(payload?.data == false) {
-                dispatch(updateStats({ questions_created: -1 } as Stats));
+            } else if(typeof payload?.data === 'number') {
+                dispatch(updateStats({ questions_created: -1, questions_submitted: -1 * payload?.data } as Stats));
                 toast.message("Question deleted successfully!");
                 window.location.reload();
             } else {
