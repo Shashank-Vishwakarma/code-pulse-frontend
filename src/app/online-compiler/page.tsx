@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/resizable"
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 const supportedLanguages = [
     {
@@ -51,6 +52,8 @@ export default function OnlineCompiler() {
     const [code, setCode] = useState(supportedLanguages[0].defaultCode);
     const [consoleOutput, setConsoleOutput] = useState("");
 
+    const [isRunning, setIsRunning] = useState(false);
+
     const editorRef = useRef(null)
 
     const handleEditorMount = (editor: any) => {
@@ -84,8 +87,27 @@ export default function OnlineCompiler() {
             return
         }
 
+        setIsRunning(true);
+        try {
+            const response = await axios.post(
+                "http://localhost:8000/api/v1/code",
+                { language: selectedLanguage, code},
+                { withCredentials: true }
+            );
+
+            if(!response.data) {
+                toast.error(response.data?.message);
+                return;
+            }
+
+            setConsoleOutput(response.data?.data);
+        } catch(err) {
+            console.log("Error running the code: ", err)
+        } finally {
+            setIsRunning(false);
+        }
+
         saveCodeToLocalStorage(selectedLanguage, code);
-        setConsoleOutput("Code run successful!");
     }
 
     return (
@@ -159,7 +181,7 @@ export default function OnlineCompiler() {
                                         onClick={handleCodeRun}
                                     >
                                         <Play className="h-4 w-4" />
-                                        Run
+                                        {isRunning ? "Running..." : "Run"}
                                     </Button>
                                 </div>
                             </div>
