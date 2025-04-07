@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import { Code, BookOpen, Newspaper } from 'lucide-react'
+import { Code, BookOpen, Newspaper, FolderCode } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/states/store'
 import { useAppSelector } from '@/hooks/redux'
@@ -24,7 +24,12 @@ export default function Header() {
             href: '/blogs', 
             icon: <Newspaper className="mr-2" />, 
             label: 'Blogs' 
-        }
+        },
+        { 
+            href: '/online-compiler', 
+            icon: <FolderCode className="mr-2" />, 
+            label: 'Online Compiler' 
+        },
     ]
 
     const user = useAppSelector((state: RootState) => state.authSlice.user)
