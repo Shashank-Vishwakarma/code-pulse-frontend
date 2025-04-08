@@ -1,6 +1,7 @@
 # Code Pulse - Frontend
 Code Pulse is a comprehensive online learning platform designed to empower developers in mastering Data Structures, Algorithms, and emerging tech concepts. Built with a focus on interactive learning and skill development, this backend serves as the robust engine powering a seamless coding education experience.
 
+# Features Snapshots
 ![image](https://github.com/user-attachments/assets/a2c61d42-6f50-43a6-a3a0-6fe7c18cc0f7)
 
 ![image](https://github.com/user-attachments/assets/27c693a6-bbf5-470c-a9cd-7ba2283d08f7)
