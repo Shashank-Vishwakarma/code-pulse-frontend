@@ -14,6 +14,8 @@ Code Pulse is a comprehensive online learning platform designed to empower devel
 
 ![image](https://github.com/user-attachments/assets/7be21fb7-8f2c-4288-ab4c-0a776c23691e)
 
+![image](https://github.com/user-attachments/assets/e5f91f39-3dfd-4365-9186-8b5ebfe33576)
+
 ## Tech Stack
 - **Language**: TypeScript
 - **Frontend Framework**: Next.js and React.js
