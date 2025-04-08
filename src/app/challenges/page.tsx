@@ -6,6 +6,8 @@ import ChallengesList from "./challenges-list"
 import { Skeleton } from "@/components/ui/skeleton"
 import Header from "@/components/shared/header/Header"
 import { Challenge, useGetChallengesofUserQuery, useGetChallengesQuery } from "@/states/apis/challengeApi"
+import { useRouter } from "next/navigation"
+import { useAppSelector } from "@/hooks/redux"
 
 export default function ChallengesPage() {
     const {data: challengesDataOfUser} = useGetChallengesofUserQuery();
@@ -13,6 +15,17 @@ export default function ChallengesPage() {
 
     const [challengesCreatedByUser, setChallengesCreatedByUser] = useState<Challenge[]>([])
     const [challengesCreatedByOtherUsers, setChallengesCreatedByOtherUsers] = useState<Challenge[]>([])
+
+    const router = useRouter();
+
+    const user = useAppSelector(state => state.authSlice.user);
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     useEffect(()=>{
         if(challengesDataOfUser && challengesDataOfUser?.data?.length > 0){

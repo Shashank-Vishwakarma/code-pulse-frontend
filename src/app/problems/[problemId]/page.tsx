@@ -3,16 +3,26 @@
 import Header from '@/components/shared/header/Header'
 import ProblemDescription, { Difficulty } from '@/components/specific/problem/ProblemDescription'
 import CodeEditor from '@/components/specific/problem/CodeEditor'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useGetQuestionByIdQuery } from '@/states/apis/questionApi'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2 } from 'lucide-react'
+import { useAppSelector } from '@/hooks/redux'
 
 export default function ProblemPage() {
     const params = useSearchParams()
     const {data: problemData, isLoading} = useGetQuestionByIdQuery(params?.get('id') as string);
+
+    const router = useRouter();
+    const user = useAppSelector(state => state.authSlice.user);
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white">

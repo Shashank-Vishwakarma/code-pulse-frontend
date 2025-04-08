@@ -18,6 +18,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/hooks/redux';
 
 const supportedLanguages = [
     {
@@ -55,6 +57,17 @@ export default function OnlineCompiler() {
     const [isRunning, setIsRunning] = useState(false);
 
     const editorRef = useRef(null);
+
+    const router = useRouter();
+
+    const user = useAppSelector(state => state.authSlice.user);
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     useEffect(()=>{
         setConsoleOutput("Run your code to see the output here...");

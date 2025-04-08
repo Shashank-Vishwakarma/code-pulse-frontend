@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,7 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Header from '@/components/shared/header/Header';
 import { useCreateQuestionMutation } from '@/states/apis/questionApi';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { Stats, updateStats } from '@/states/slices/authSlice';
 
 export const formSchema = z.object({
@@ -78,7 +78,15 @@ export default function CreateProblemPage() {
     const [createQuestion, {isLoading}] = useCreateQuestionMutation();
     const router = useRouter()
 
+    const user = useAppSelector(state => state.authSlice.user);
     const dispatch = useAppDispatch();
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {

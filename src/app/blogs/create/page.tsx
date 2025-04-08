@@ -1,7 +1,7 @@
 "use client"
 
 import { Input } from '@/components/ui/input'
-import React from 'react'
+import React, { useEffect } from 'react'
 import MDEditor from '@uiw/react-md-editor';
 import { useCreateBlogMutation } from '@/states/apis/blogApi';
 import { toast } from 'sonner';
@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/shared/header/Header';
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {Stats, updateStats} from '@/states/slices/authSlice'
 
 export default function CreateBlogPage() {
@@ -23,7 +23,16 @@ export default function CreateBlogPage() {
 
     const router = useRouter();
 
+    const user = useAppSelector(state => state.authSlice.user);
+
     const dispatch = useAppDispatch();
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const handleCreateBlog = async () => {
         try {

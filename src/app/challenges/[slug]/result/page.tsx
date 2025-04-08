@@ -21,6 +21,13 @@ export default function ChallengeResult() {
     const router = useRouter();
 
     useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
+
+    useEffect(()=>{
         if(!challenge) return;
 
         setChallengeData(challenge.data);

@@ -40,10 +40,12 @@ export default function ProblemsPage() {
     }, [searchQueryDebounced, router]);
 
     const user = useAppSelector((state: RootState) => state.authSlice.user)
-    if(!user) {
-        router.replace("/login")
-        return null
-    }
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const getDifficultyColor = (difficulty: string) => {
         switch (difficulty) {

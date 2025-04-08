@@ -8,6 +8,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/shared/header/Header'
 import BlogCard from '@/components/shared/blog-card/BlogCard'
+import { useAppSelector } from '@/hooks/redux'
 
 export default function BlogsPage() {
     const [searchQuery, setSearchQuery] = useState('')
@@ -16,6 +17,8 @@ export default function BlogsPage() {
 
     const router = useRouter();
 
+    const user = useAppSelector(state => state.authSlice.user);
+
     useEffect(() => {
         if (debouncedSearchQuery) {
             router.push("/blogs?q=" + debouncedSearchQuery);
@@ -23,6 +26,13 @@ export default function BlogsPage() {
             router.push("/blogs");
         }
     }, [debouncedSearchQuery, router]);
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col px-4 py-12">

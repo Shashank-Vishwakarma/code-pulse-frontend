@@ -18,6 +18,7 @@ import BlogCard, { BlogProps } from "../component-cards/blogs-created-card";
 import ChallengeCreatedCard, { ChallengesCreatedProps } from "../component-cards/challenges-created-card";
 import ChallengeTakenCard, { ChallengesTakenProps } from "../component-cards/challenges-taken-card";
 import StatsCard from "../component-cards/stats-card";
+import { useRouter } from "next/navigation";
 
 type ActiveTab = "questions-submitted" | "questions-created" | "blogs-created" | "challenges-created" | "challenges-taken";
 
@@ -41,6 +42,8 @@ export default function ProfilePage() {
     const [challengesTaken, setChallengesTaken] = useState<ChallengesTakenProps[]>([]);
 
     const user = useAppSelector(state => state.authSlice.user);
+
+    const router = useRouter();
 
     useEffect(()=>{
         if(fetchedTabs.has(activeTab)) return
@@ -82,6 +85,13 @@ export default function ProfilePage() {
 
         fetchData()
     }, [activeTab])
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     return (
         <div className="container mx-auto py-8 px-4">

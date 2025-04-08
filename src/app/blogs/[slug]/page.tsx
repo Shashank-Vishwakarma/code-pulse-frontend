@@ -7,11 +7,12 @@ import Header from "@/components/shared/header/Header"
 import BlogComments from "./blog-comments"
 import { useEffect, useState } from "react"
 import { Blog, useGetBlogByIdQuery } from "@/states/apis/blogApi"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Markdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import 'highlight.js/styles/github-dark.css' // or any other theme
+import { useAppSelector } from "@/hooks/redux"
 
 export default function BlogByIdPage() {
     const {slug} = useParams();
@@ -19,11 +20,22 @@ export default function BlogByIdPage() {
 
     const [blogData, setBlogData] = useState<Blog>()
 
+    const router = useRouter();
+
+    const user = useAppSelector(state => state.authSlice.user);
+
     useEffect(() => {
         if(!blog) return
 
         setBlogData(blog?.data)
     }, [blog])
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     return (
         <div className="min-h-screen bg-background">

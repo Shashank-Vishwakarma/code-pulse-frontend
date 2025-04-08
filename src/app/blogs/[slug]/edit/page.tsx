@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/shared/header/Header';
+import { useAppSelector } from '@/hooks/redux';
 
 export default function EditBlogPage() {
     const {slug} = useParams();
@@ -23,6 +24,8 @@ export default function EditBlogPage() {
 
     const router = useRouter();
 
+    const user = useAppSelector(state => state.authSlice.user);
+
     useEffect(()=>{
         if(!blog) return;
 
@@ -30,6 +33,13 @@ export default function EditBlogPage() {
         setDescription(blog?.data?.body || "");
         setIsBlogPublished(blog?.data?.isBlogPublished || false);
     }, [blog])
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const handleUpdateBlog = async () => {
         try {

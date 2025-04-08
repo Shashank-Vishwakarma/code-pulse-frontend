@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Header from '@/components/shared/header/Header';
 import { CodeSnippet, TestCase, useGetQuestionByIdQuery, useUpdateQuestionMutation } from '@/states/apis/questionApi';
 import { useParams, useRouter } from 'next/navigation';
+import { useAppSelector } from '@/hooks/redux';
 
 export const formSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
@@ -100,6 +101,15 @@ export default function EditProblemPage() {
 
     const [updateQuestion, {isLoading}] = useUpdateQuestionMutation();
     const router = useRouter()
+
+    const user = useAppSelector(state => state.authSlice.user);
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {

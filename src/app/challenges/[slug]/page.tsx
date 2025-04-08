@@ -6,13 +6,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useGetChallengeByIdQuery, UserSelectedAnswer, useSubmitChallengeMutation } from '@/states/apis/challengeApi';
 import { Stats, updateStats } from '@/states/slices/authSlice';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 
 export default function ChallengePage() {
@@ -25,7 +25,15 @@ export default function ChallengePage() {
 
     const router = useRouter()
 
+    const user = useAppSelector(state => state.authSlice.user);
     const dispatch = useAppDispatch();
+
+    useEffect(()=>{
+        if(!user) {
+            router.push("/login");
+            return
+        }
+    }, [user])
 
     const handleSubmit = async ()=>{
         if(Object.keys(selectedAnswers).length < 10){
