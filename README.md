@@ -12,6 +12,8 @@ Code Pulse is a comprehensive online learning platform designed to empower devel
 
 ![image](https://github.com/user-attachments/assets/7c944c5e-4f96-4d0a-ac92-d94eb813feef)
 
+![image](https://github.com/user-attachments/assets/8bfd98d8-b195-435b-a1c3-4019d78c49b2)
+
 ![image](https://github.com/user-attachments/assets/7be21fb7-8f2c-4288-ab4c-0a776c23691e)
 
 ![image](https://github.com/user-attachments/assets/e5f91f39-3dfd-4365-9186-8b5ebfe33576)
