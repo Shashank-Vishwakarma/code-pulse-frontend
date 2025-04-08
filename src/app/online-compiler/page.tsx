@@ -1,14 +1,14 @@
 "use client"
 
 import Header from '@/components/shared/header/Header'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import {FaPython} from "react-icons/fa"
 import { RiJavascriptFill } from "react-icons/ri";
 import { PiFileCppBold } from "react-icons/pi";
 import { LiaJava } from "react-icons/lia";
 import { FaGolang } from "react-icons/fa6";
 import Editor from '@monaco-editor/react';
-import { Play, Trash } from 'lucide-react';
+import { Loader2, Play, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     ResizableHandle,
@@ -31,6 +31,11 @@ const supportedLanguages = [
         defaultCode: localStorage.getItem("javascript-code-pulse-compiler-code") || "console.log(\"Hello World\")"
     },
     {
+        language: "go",
+        icon: <FaGolang className='w-8 h-8'/>,
+        defaultCode: localStorage.getItem("go-code-pulse-compiler-code") || "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello World\")\n}"
+    },
+    {
         language: "cpp",
         icon: <PiFileCppBold  className='w-8 h-8'/>,
         defaultCode: localStorage.getItem("cpp-code-pulse-compiler-code") || "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n    cout << \"Hello World\";\n    return 0;\n}"
@@ -39,11 +44,6 @@ const supportedLanguages = [
         language: "java",
         icon: <LiaJava  className='w-8 h-8'/>,
         defaultCode: localStorage.getItem("java-code-pulse-compiler-code") || "class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World\");\n    }\n}"
-    },
-    {
-        language: "go",
-        icon: <FaGolang className='w-8 h-8'/>,
-        defaultCode: localStorage.getItem("go-code-pulse-compiler-code") || "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello World\")\n}"
     }
 ]
 
@@ -54,7 +54,11 @@ export default function OnlineCompiler() {
 
     const [isRunning, setIsRunning] = useState(false);
 
-    const editorRef = useRef(null)
+    const editorRef = useRef(null);
+
+    useEffect(()=>{
+        setConsoleOutput("Run your code to see the output here...");
+    }, [])
 
     const handleEditorMount = (editor: any) => {
         editorRef.current = editor;
@@ -187,7 +191,7 @@ export default function OnlineCompiler() {
                             </div>
 
                             <div className="flex-1 p-4 h-full font-mono text-sm bg-black text-white overflow-auto whitespace-pre-wrap">
-                                {consoleOutput || "Run your code to see output here..."}
+                                {isRunning ? <Loader2 className='w-12 h-12 animate-spin mx-auto' /> : consoleOutput}
                             </div>
                         </ResizablePanel>
                     </ResizablePanelGroup>
