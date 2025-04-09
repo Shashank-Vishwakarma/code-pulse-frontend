@@ -2,43 +2,43 @@
 Code Pulse is a comprehensive online learning platform designed to empower developers in mastering Data Structures, Algorithms, and emerging tech concepts. Built with a focus on interactive learning and skill development, this backend serves as the robust engine powering a seamless coding education experience.
 
 # Features Snapshots
-1. Landing Page
+### Landing Page
 The landing page introduces the platform and provides options to log in or create a new account for seamless access.
 
 ![image](https://github.com/user-attachments/assets/a2c61d42-6f50-43a6-a3a0-6fe7c18cc0f7)
 
-2. Online Compiler
+### Online Compiler
 Supports Python, JavaScript, Go, C++, and Java for coding directly within the platform.
 
 ![image](https://github.com/user-attachments/assets/27c693a6-bbf5-470c-a9cd-7ba2283d08f7)
 
-3. Problem Set Page
+### Problem Set Page
 Displays a comprehensive list of coding problems with a search bar utilizing a debouncing technique for efficient filtering.
 
 ![image](https://github.com/user-attachments/assets/1afa105b-57b5-411c-8280-54abab66a29a)
 
-4. Problem Description Page
+### Problem Description Page
 Includes problem title, description, example test cases, hints, topics, a code editor with starter code for Python and JavaScript, and options to run or submit solutions.
 
 ![image](https://github.com/user-attachments/assets/11c06b49-1e81-42b6-96e5-5896414395c6)
 
-5. Challenges Page
+### Challenges Page
 This page has AI-powered generation of challenges and displays unique coding challenges for users to attempt.
 ![image](https://github.com/user-attachments/assets/9225d5b6-3502-4bd8-a7f2-6ac40eff0e2f)
 
-6. Challenge Page
+### Challenge Page
 Lists all questions in a selected challenge with a submit button for finalizing solutions.
 ![image](https://github.com/user-attachments/assets/99012341-c6fd-441b-ae3d-d7f9f6f79694)
 
-7. Blogs Page
+### Blogs Page
 Showcases all user-published blogs with a search filter that leverages debouncing for quick and precise results.
 ![image](https://github.com/user-attachments/assets/8bfd98d8-b195-435b-a1c3-4019d78c49b2)
 
-8. Blog Page
+### Blog Page
 Displays a banner image, blog title, published date, markdown-formatted content, and an interactive comment section.
 ![image](https://github.com/user-attachments/assets/7be21fb7-8f2c-4288-ab4c-0a776c23691e)
 
-9. Account Profile
+### Account Profile
 Presents user statistics, including total question submissions, questions created, blogs published, challenges created, and challenges attempted.
 ![image](https://github.com/user-attachments/assets/e5f91f39-3dfd-4365-9186-8b5ebfe33576)
 
