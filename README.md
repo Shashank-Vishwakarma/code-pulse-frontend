@@ -24,22 +24,27 @@ Includes problem title, description, example test cases, hints, topics, a code e
 
 ### Challenges Page
 This page has AI-powered generation of challenges and displays unique coding challenges for users to attempt.
+
 ![image](https://github.com/user-attachments/assets/9225d5b6-3502-4bd8-a7f2-6ac40eff0e2f)
 
 ### Challenge Page
 Lists all questions in a selected challenge with a submit button for finalizing solutions.
+
 ![image](https://github.com/user-attachments/assets/99012341-c6fd-441b-ae3d-d7f9f6f79694)
 
 ### Blogs Page
 Showcases all user-published blogs with a search filter that leverages debouncing for quick and precise results.
+
 ![image](https://github.com/user-attachments/assets/8bfd98d8-b195-435b-a1c3-4019d78c49b2)
 
 ### Blog Page
 Displays a banner image, blog title, published date, markdown-formatted content, and an interactive comment section.
+
 ![image](https://github.com/user-attachments/assets/7be21fb7-8f2c-4288-ab4c-0a776c23691e)
 
 ### Account Profile
 Presents user statistics, including total question submissions, questions created, blogs published, challenges created, and challenges attempted.
+
 ![image](https://github.com/user-attachments/assets/e5f91f39-3dfd-4365-9186-8b5ebfe33576)
 
 ## Tech Stack
