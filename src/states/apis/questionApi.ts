@@ -36,6 +36,20 @@ export interface SingleQuestion {
     data: Question
 }
 
+
+// submissions on a question
+interface Submission {
+    id: string
+    language: string
+    code: string
+    createdAt: string
+}
+
+export interface CodeSubmission {
+    message: string
+    data: Submission[]
+}
+
 export const questionApi = createApi({
     reducerPath: 'questionApi',
     baseQuery: fetchBaseQuery({
@@ -51,6 +65,9 @@ export const questionApi = createApi({
         getQuestionById: builder.query<SingleQuestion, string>({
             query: (id) => `/${id}`,
             providesTags: ['Question']
+        }),
+        getSubmissionsOnAQuestion: builder.query<CodeSubmission, string>({
+            query: (id: string) => `/${id}/submissions`,
         }),
         createQuestion: builder.mutation({
             query: (data: z.infer<typeof formSchema>) => ({
@@ -78,4 +95,4 @@ export const questionApi = createApi({
     })
 })
 
-export const { useGetQuestionsQuery, useGetQuestionByIdQuery, useCreateQuestionMutation, useUpdateQuestionMutation, useDeleteQuestionMutation } = questionApi
+export const { useGetQuestionsQuery, useGetQuestionByIdQuery, useGetSubmissionsOnAQuestionQuery, useCreateQuestionMutation, useUpdateQuestionMutation, useDeleteQuestionMutation } = questionApi
