@@ -6,14 +6,17 @@ import CodeEditor from '@/components/specific/problem/CodeEditor'
 import React, { useEffect } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useGetQuestionByIdQuery } from '@/states/apis/questionApi'
+import { useGetQuestionByIdQuery, useGetSubmissionsOnAQuestionQuery } from '@/states/apis/questionApi'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2 } from 'lucide-react'
 import { useAppSelector } from '@/hooks/redux'
+import { SubmissionItem } from './submission-item'
 
 export default function ProblemPage() {
     const params = useSearchParams()
     const {data: problemData, isLoading} = useGetQuestionByIdQuery(params?.get('id') as string);
+
+    const {data: submissions} = useGetSubmissionsOnAQuestionQuery(params?.get('id') as string);
 
     const router = useRouter();
     const user = useAppSelector(state => state.authSlice.user);
@@ -59,7 +62,11 @@ export default function ProblemPage() {
 
                         <TabsContent value='submissions'  className="mt-6">
                             <div className='text-center text-muted-foreground mt-6'>
-                                No Submissions found
+                                {
+                                    submissions && submissions?.data?.length > 0 ? submissions?.data?.map((submission) => (
+                                        <SubmissionItem key={submission.id} id={submission.id} language={submission.language} code={submission.code} createdAt={submission.createdAt} />
+                                    )) : "No submissions yet"
+                                }
                             </div>
                         </TabsContent>
                     </Tabs>

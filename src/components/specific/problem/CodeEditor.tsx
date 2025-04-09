@@ -13,11 +13,13 @@ import {
 import { CodeSnippet } from '@/states/apis/questionApi'
 import axios from 'axios'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {Stats, updateStats} from '@/states/slices/authSlice'
 import { Loader2 } from 'lucide-react'
 
 export default function CodeEditor({questionId, codeSnippets}: {questionId: string, codeSnippets: CodeSnippet[] | undefined}) {
+    const user = useAppSelector(state => state.authSlice.user);
+    
     const [language, setLanguage] = useState('python')
     const [code, setCode] = useState<string>("")
     const [output, setOutput] = useState(`No Output Available`);
@@ -29,7 +31,7 @@ export default function CodeEditor({questionId, codeSnippets}: {questionId: stri
     const dispatch = useAppDispatch();
 
     useEffect(()=>{
-        setCode(prev => codeSnippets?.find((snippet) => snippet.language.toLowerCase() === language)?.code || "")
+        setCode(prev => localStorage.getItem(`${user?.username}-${questionId}-code-pulse-compiler-code-${language}`) || codeSnippets?.find((snippet) => snippet.language.toLowerCase() === language)?.code || "")
     }, [codeSnippets, language, setCode])
 
     const handleLanguageChange = (selectedLanguage: string) => {
@@ -91,6 +93,9 @@ export default function CodeEditor({questionId, codeSnippets}: {questionId: stri
                 }
                 
                 setOutput(out)
+
+                // save the code to local storage
+                localStorage.setItem(`${user?.username}-${questionId}-code-pulse-compiler-code-${language}`, code);
 
                 // dispatch to store
                 if(type == "submit") {
