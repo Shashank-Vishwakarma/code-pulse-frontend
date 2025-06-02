@@ -1,6 +1,8 @@
 # Code Pulse - Frontend
 Code Pulse is a comprehensive online learning platform designed to empower developers in mastering Data Structures, Algorithms, and emerging tech concepts. Built with a focus on interactive learning and skill development, this backend serves as the robust engine powering a seamless coding education experience.
 
+Backend Code: https://github.com/Shashank-Vishwakarma/code-pulse-backend
+
 # Features Snapshots
 ### Landing Page
 The landing page introduces the platform and provides options to log in or create a new account for seamless access.
@@ -59,6 +61,8 @@ Presents user statistics, including total question submissions, questions create
 ## Key Features
 1. **User Authentication & Management**
    - Secure user registration and login
+   - Email verification
+   - Reset Password
    - JWT-based authentication
    - User profile management
 
