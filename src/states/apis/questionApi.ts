@@ -1,98 +1,104 @@
-import { formSchema } from '@/app/problems/create/page'
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { z } from 'zod'
+import { formSchema } from "@/app/problems/create/page";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { z } from "zod";
 
 export interface TestCase {
-    input: string
-    output: string
-    explanation?: string
+    input: string;
+    output: string;
+    explanation?: string;
 }
 
 export interface CodeSnippet {
-    language: string
-    code: string
+    language: string;
+    code: string;
 }
 
 export interface Question {
-    id: string
-    title: string
-    description: string
-    difficulty: string
-    hints: string[]
-    companies: string[]
-    tags: string[]
-    testCases: TestCase[]
-    codeSnippets: CodeSnippet[]
-    slug: string
+    id: string;
+    title: string;
+    description: string;
+    difficulty: string;
+    hints: string[];
+    companies: string[];
+    tags: string[];
+    testCases: TestCase[];
+    codeSnippets: CodeSnippet[];
+    slug: string;
 }
 
 export interface QuestionsData {
-    message: string
-    data: Question[]
+    message: string;
+    data: Question[];
 }
 
 export interface SingleQuestion {
-    message: string
-    data: Question
+    message: string;
+    data: Question;
 }
-
 
 // submissions on a question
 interface Submission {
-    id: string
-    language: string
-    code: string
-    createdAt: string
+    id: string;
+    language: string;
+    code: string;
+    createdAt: string;
 }
 
 export interface CodeSubmission {
-    message: string
-    data: Submission[]
+    message: string;
+    data: Submission[];
 }
 
 export const questionApi = createApi({
-    reducerPath: 'questionApi',
+    reducerPath: "questionApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:8000/api/v1/questions',
-        credentials: 'include',
+        baseUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/questions`,
+        credentials: "include",
     }),
-    tagTypes: ['Questions', 'Question'],
+    tagTypes: ["Questions", "Question"],
     endpoints: (builder) => ({
         getQuestions: builder.query<QuestionsData, string>({
-            query: (q) => q != "" ? `/?q=${q}` : `/`,
-            providesTags: ['Questions']
+            query: (q) => (q != "" ? `/?q=${q}` : `/`),
+            providesTags: ["Questions"],
         }),
         getQuestionById: builder.query<SingleQuestion, string>({
             query: (id) => `/${id}`,
-            providesTags: ['Question']
+            providesTags: ["Question"],
         }),
         getSubmissionsOnAQuestion: builder.query<CodeSubmission, string>({
             query: (id: string) => `/${id}/submissions`,
         }),
         createQuestion: builder.mutation({
             query: (data: z.infer<typeof formSchema>) => ({
-                url: '/create',
+                url: "/create",
                 body: data,
-                method: 'POST'
+                method: "POST",
             }),
-            invalidatesTags: ['Questions']
+            invalidatesTags: ["Questions"],
         }),
         updateQuestion: builder.mutation({
-            query: ({id, data}) => ({
+            query: ({ id, data }) => ({
                 url: `/${id}`,
                 body: data,
-                method: 'PUT'
+                method: "PUT",
             }),
-            invalidatesTags: ['Question']
+            invalidatesTags: ["Question"],
         }),
         deleteQuestion: builder.mutation({
             query: (id) => ({
                 url: `/${id}`,
-                method: 'DELETE'
+                method: "DELETE",
             }),
-            invalidatesTags: ['Questions']
-        })
-    })
-})
+            invalidatesTags: ["Questions"],
+        }),
+    }),
+});
 
-export const { useGetQuestionsQuery, useGetQuestionByIdQuery, useGetSubmissionsOnAQuestionQuery, useCreateQuestionMutation, useUpdateQuestionMutation, useDeleteQuestionMutation } = questionApi
+export const {
+    useGetQuestionsQuery,
+    useGetQuestionByIdQuery,
+    useGetSubmissionsOnAQuestionQuery,
+    useCreateQuestionMutation,
+    useUpdateQuestionMutation,
+    useDeleteQuestionMutation,
+} = questionApi;
